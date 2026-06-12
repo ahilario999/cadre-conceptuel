@@ -212,6 +212,34 @@ correspond, une icône générique (« étincelle ») est utilisée.
 
 ---
 
+## 7. Aide à la rédaction par IA (« Suggérer un brouillon »)
+
+Chaque question de l'atelier propose un bouton **« Suggérer un brouillon »**. Il
+génère, via l'API [Groq](https://console.groq.com), un court texte de départ (3 à 5
+phrases) adapté à la question et au contexte du bloc — la personne le modifie ensuite
+à sa façon. Si le champ contient déjà du texte, une confirmation est demandée avant de
+le remplacer.
+
+Cette fonctionnalité repose sur une fonction serverless (`api/suggest.js`) qui agit
+comme intermédiaire : la clé API Groq reste **côté serveur** et n'est jamais exposée au
+navigateur.
+
+### Configuration (une seule fois)
+
+1. Crée un compte gratuit sur [console.groq.com](https://console.groq.com) et génère une
+   clé API (section « API Keys »).
+2. Dans le tableau de bord Vercel du projet → **Settings → Environment Variables**,
+   ajoute une variable :
+   - Nom : `GROQ_API_KEY`
+   - Valeur : ta clé Groq
+   - Environnements : Production (et Preview/Development si désiré)
+3. Redéploie le projet (un nouveau déploiement reprend automatiquement la variable).
+
+Sans cette variable, le bouton affiche un message indiquant que la suggestion IA n'est
+pas configurée — le reste de l'outil continue de fonctionner normalement.
+
+---
+
 ## Crédits
 
 Outil conçu à partir du cadre conceptuel **« Le graphiste dans la boucle »**

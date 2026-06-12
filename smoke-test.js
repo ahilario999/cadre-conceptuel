@@ -19,6 +19,19 @@ dom.window.addEventListener("error", (e) => {
 dom.window.html2canvas = () => Promise.resolve({ toDataURL: () => "data:image/png;base64,", height: 100, width: 100 });
 dom.window.jspdf = { jsPDF: function () { this.addImage = () => {}; this.save = () => {}; } };
 
+// jsdom n'implémente pas confirm() — toujours "accepter" pour les tests
+dom.window.confirm = () => true;
+
+// Stub fetch pour le bouton "Suggérer un brouillon" (api/suggest)
+let lastFetchBody = null;
+dom.window.fetch = (url, opts) => {
+  lastFetchBody = opts && opts.body ? JSON.parse(opts.body) : null;
+  return Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve({ suggestion: "Brouillon généré par le test." }),
+  });
+};
+
 setTimeout(() => {
   const win = dom.window;
   const doc = win.document;
@@ -75,6 +88,22 @@ setTimeout(() => {
   console.log("\n=== Piste de réflexion toujours visible (bloc qa) ===");
   const qaHint = doc.querySelector(".qa-field__hint");
   console.log("piste visible sans clic:", !!qaHint);
+
+  console.log("\n=== Bouton « Suggérer un brouillon » (aide IA) ===");
+  const aiButtons = doc.querySelectorAll(".qa-field__ai-btn");
+  console.log("boutons IA présents:", aiButtons.length);
+  if (aiButtons.length) {
+    const btn = aiButtons[0];
+    const field = btn.closest(".qa-field");
+    const textarea = field.querySelector("textarea");
+    const before = textarea.value;
+    btn.click();
+    setTimeout(() => {
+      console.log("texte avant clic:", JSON.stringify(before));
+      console.log("texte après clic (rempli par la suggestion):", JSON.stringify(textarea.value));
+      console.log("requête envoyée à /api/suggest:", JSON.stringify(lastFetchBody));
+    }, 50);
+  }
 
   console.log("\n=== Navigate to last step then overview ===");
   let next = doc.getElementById("btn-next-step");
