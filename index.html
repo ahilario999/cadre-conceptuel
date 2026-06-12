@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Le praticien dans la boucle — Cadre conceptuel IA</title>
+<meta name="description" content="Construisez votre propre Cadre conceptuel sur l'usage de l'IA générative dans votre programme d'études." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+<a href="#main" class="skip-link">Aller au contenu principal</a>
+
+<div id="app">
+
+  <header class="app-header">
+    <div class="app-header__brand">
+      <div class="app-header__logo" id="header-logo" aria-hidden="true"></div>
+      <div>
+        <div class="app-header__title" id="header-title">Le praticien dans la boucle</div>
+        <div class="app-header__subtitle" id="header-subtitle">Cadre conceptuel — IA &amp; mon domaine</div>
+      </div>
+    </div>
+    <div class="app-header__actions">
+      <button class="btn btn--ghost btn--sm" id="btn-theme-toggle" type="button" aria-pressed="false">
+        <span id="theme-toggle-label">Mode sombre</span>
+      </button>
+      <button class="btn btn--ghost btn--sm" id="btn-save-json" type="button">
+        Sauvegarder
+      </button>
+      <label class="btn btn--ghost btn--sm" id="btn-load-json-label" for="input-load-json" style="cursor:pointer;">
+        Importer
+        <input type="file" id="input-load-json" accept="application/json" class="visually-hidden" />
+      </label>
+      <button class="btn btn--ghost btn--sm" id="btn-restart" type="button">
+        Recommencer
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- ============================ ÉCRAN 1 : CONFIGURATION ============================ -->
+    <section class="screen active" id="screen-config" aria-labelledby="config-title">
+      <h1 class="screen-title" id="config-title">Construisez votre Cadre conceptuel</h1>
+      <p class="screen-lead">
+        Inspiré du cadre « Le graphiste dans la boucle », cet outil vous coache pour bâtir le vôtre :
+        répondez à une courte entrevue par bloc, avec des pistes de réflexion pour chaque thème —
+        la décision finale vous appartient toujours.
+      </p>
+
+      <div class="config-grid">
+
+        <div class="config-card">
+          <h3>1 — Identité</h3>
+
+          <div class="field">
+            <label for="input-program-name">Nom du programme</label>
+            <input type="text" id="input-program-name" placeholder="Ex. Design graphique" />
+          </div>
+          <div class="field">
+            <label for="input-institution-name">Établissement</label>
+            <input type="text" id="input-institution-name" placeholder="Ex. La Cité" />
+          </div>
+          <div class="field">
+            <label for="input-author-name">Votre nom (optionnel)</label>
+            <input type="text" id="input-author-name" placeholder="Ex. Antonio Hilario" />
+          </div>
+          <div class="field">
+            <label for="input-role">Votre rôle ou titre professionnel</label>
+            <input type="text" id="input-role" placeholder="Ex. Designer graphique, Enseignant·e" />
+            <span class="field-hint">Ce mot remplacera « Praticien·ne » dans le bloc « transformation » de votre Cadre conceptuel.</span>
+          </div>
+          <div class="field">
+            <label for="input-cadre-title">Titre du cadre</label>
+            <input type="text" id="input-cadre-title" placeholder="Ex. Le [praticien] dans la boucle" />
+            <span class="field-hint">Astuce : reprenez la structure « Le/La [rôle] dans la boucle ».</span>
+          </div>
+          <div class="field">
+            <label for="input-cadre-tagline">Accroche (PENSE • CONÇOIT • JUGE • CRÉE)</label>
+            <input type="text" id="input-cadre-tagline" placeholder="Ex. PENSE • CONÇOIT • JUGE • CRÉE" />
+          </div>
+          <div class="field">
+            <label for="input-cadre-quote">Citation</label>
+            <input type="text" id="input-cadre-quote" placeholder="Ex. « La créativité ne se délègue pas. Elle se nourrit. »" />
+          </div>
+
+          <div class="field">
+            <span class="field-label">Logo (programme ou établissement)</span>
+            <label class="logo-dropzone" id="logo-dropzone" for="input-logo">
+              <span class="logo-dropzone__preview" id="logo-preview" aria-hidden="true"></span>
+              <span class="logo-dropzone__text">
+                <strong>Cliquez pour téléverser</strong> ou glissez une image ici (PNG/SVG, fond transparent recommandé).
+              </span>
+              <input type="file" id="input-logo" accept="image/*" class="visually-hidden" />
+            </label>
+          </div>
+        </div>
+
+        <div class="config-card">
+          <h3>2 — Apparence</h3>
+          <div class="field">
+            <span class="field-label">Couleur d'accent</span>
+            <div class="color-row" id="color-presets" role="group" aria-label="Couleurs d'accent prédéfinies"></div>
+            <div class="color-row">
+              <input type="color" id="input-accent-custom" value="#0E7C75" aria-label="Couleur d'accent personnalisée" style="width:48px;height:36px;padding:2px;border-radius:8px;border:1px solid var(--gray-200);cursor:pointer;" />
+              <span class="field-hint">Personnalisée</span>
+            </div>
+            <div class="contrast-note" id="contrast-note" role="status"></div>
+          </div>
+
+          <div class="field" style="margin-top:10px;">
+            <h3 style="margin-bottom:4px;">3 — Blocs du cadre</h3>
+            <span class="field-hint">Activez, désactivez ou réordonnez les blocs selon votre champ d'expertise. Vous pourrez aussi en ajouter plus tard.</span>
+            <div class="block-toggle-list" id="block-toggle-list"></div>
+            <button class="btn btn--ghost btn--sm" id="btn-add-block-config" type="button" style="margin-top:6px;">
+              <span aria-hidden="true" class="icon-plus"></span> Ajouter un bloc personnalisé
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="config-actions">
+        <span class="field-hint">Vous pouvez importer une sauvegarde existante avec le bouton « Importer » en haut.</span>
+        <button class="btn btn--accent" id="btn-start-interview" type="button">
+          Commencer l'entrevue →
+        </button>
+      </div>
+    </section>
+
+    <!-- ============================ ÉCRAN 2 : ENTREVUE (ATELIER EN DUO) ============================ -->
+    <section class="screen" id="screen-interview" aria-labelledby="interview-title">
+      <h1 class="screen-title" id="interview-title">L'atelier</h1>
+      <p class="screen-lead">Remplissez un bloc à la fois, à votre rythme. À droite, regardez votre Cadre conceptuel se construire en direct.</p>
+
+      <div class="progress" id="interview-progress" role="progressbar" aria-label="Progression de l'entrevue"></div>
+      <div class="progress-label" id="interview-progress-label"></div>
+
+      <div class="atelier">
+        <div class="atelier__form">
+          <div class="interview-card" id="interview-card">
+            <div class="interview-card__pattern" id="interview-pattern" aria-hidden="true"></div>
+            <div class="interview-card__eyebrow">
+              <div class="interview-card__icon" id="interview-block-icon" aria-hidden="true"></div>
+              <div>
+                <div class="interview-card__block-title" id="interview-block-title"></div>
+                <div class="interview-card__block-sub" id="interview-block-sub"></div>
+              </div>
+            </div>
+
+            <p class="interview-description" id="interview-description"></p>
+
+            <div class="hint-box" id="interview-hint" hidden>
+              <div class="hint-box__icon" aria-hidden="true">
+                <span class="icon-spark"></span>
+              </div>
+              <div class="hint-box__text">
+                <span class="hint-box__label">Piste de réflexion</span>
+                <span id="interview-hint-text"></span>
+              </div>
+            </div>
+
+            <div class="interview-input" id="interview-input"></div>
+
+            <div class="interview-nav">
+              <button class="btn btn--ghost" id="btn-prev-step" type="button">
+                <span class="icon-arrow-left"></span> Précédent
+              </button>
+              <div class="interview-nav__right">
+                <button class="btn btn--ghost" id="btn-toggle-hint" type="button" hidden>Voir la piste</button>
+                <button class="btn btn--accent" id="btn-next-step" type="button">
+                  Suivant <span class="icon-arrow-right"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="atelier__preview" aria-hidden="true">
+          <div class="atelier__preview-label">
+            <span class="icon-eye"></span> Votre Cadre conceptuel — en direct
+          </div>
+          <div class="atelier__preview-canvas" id="preview-canvas">
+            <div class="preview-frame" id="preview-frame">
+              <div class="bento" id="preview-grid"></div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ============================ ÉCRAN 3 : APERÇU / ÉDITION ============================ -->
+    <section class="screen" id="screen-overview" aria-labelledby="overview-title">
+      <h1 class="screen-title" id="overview-title">Aperçu de votre cadre</h1>
+      <p class="screen-lead">Cliquez sur un bloc pour le modifier. Ajoutez ou retirez des blocs au besoin, puis générez votre Cadre conceptuel final.</p>
+
+      <div class="overview-toolbar">
+        <button class="btn btn--ghost" id="btn-back-to-interview" type="button">
+          <span class="icon-arrow-left"></span> Reprendre l'entrevue
+        </button>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn btn--ghost" id="btn-add-block-overview" type="button">
+            <span class="icon-plus"></span> Ajouter un bloc
+          </button>
+          <button class="btn btn--accent" id="btn-generate-final" type="button">
+            Générer mon Cadre conceptuel →
+          </button>
+        </div>
+      </div>
+
+      <div class="bento" id="overview-grid"></div>
+    </section>
+
+    <!-- ============================ ÉCRAN 4 : CADRE CONCEPTUEL FINAL ============================ -->
+    <section class="screen" id="screen-final" aria-labelledby="final-title">
+      <h1 class="screen-title" id="final-title">Votre Cadre conceptuel</h1>
+      <p class="screen-lead">Téléchargez votre Cadre conceptuel en PDF, sauvegardez votre fichier de travail pour le reprendre plus tard, ou retournez à l'édition.</p>
+
+      <div class="final-actions">
+        <button class="btn btn--accent" id="btn-export-pdf" type="button">
+          <span class="icon-download"></span> Télécharger en PDF
+        </button>
+        <button class="btn btn--ghost" id="btn-export-json-final" type="button">
+          <span class="icon-download"></span> Télécharger le fichier de sauvegarde (.json)
+        </button>
+        <button class="btn btn--ghost" id="btn-back-to-overview" type="button">
+          <span class="icon-arrow-left"></span> Retour à l'édition
+        </button>
+      </div>
+
+      <div id="final-card">
+        <div class="bento" id="final-grid"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="app-footer">
+    Outil basé sur le cadre « Le graphiste dans la boucle » — Antonio Hilario, La Cité.
+    Conçu pour être adapté à tout programme d'études. Aucune donnée n'est envoyée à un serveur :
+    tout reste dans votre navigateur, sauvegardez vos fichiers régulièrement.
+  </footer>
+</div>
+
+<!-- Modale d'édition d'un bloc (depuis l'aperçu) -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal__header">
+      <div>
+        <div class="modal__title" id="modal-title">Modifier un bloc</div>
+      </div>
+      <button class="modal__close" id="modal-close" type="button" aria-label="Fermer">
+        <span class="icon-check" style="display:none;"></span>
+        ✕
+      </button>
+    </div>
+    <div id="modal-body"></div>
+    <div class="modal__footer">
+      <button class="btn btn--ghost" id="modal-cancel" type="button">Annuler</button>
+      <button class="btn btn--accent" id="modal-save" type="button">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modale d'ajout de bloc personnalisé -->
+<div class="modal-overlay" id="modal-add-block-overlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-add-title">
+    <div class="modal__header">
+      <div class="modal__title" id="modal-add-title">Ajouter un bloc personnalisé</div>
+      <button class="modal__close" id="modal-add-close" type="button" aria-label="Fermer">✕</button>
+    </div>
+    <div class="field" style="margin-bottom:10px;">
+      <label for="new-block-title">Titre du bloc</label>
+      <input type="text" id="new-block-title" placeholder="Ex. Accessibilité" />
+    </div>
+    <div class="field" style="margin-bottom:10px;">
+      <label for="new-block-subtitle">Sous-titre</label>
+      <input type="text" id="new-block-subtitle" placeholder="Ex. Une réflexion propre à mon domaine" />
+    </div>
+    <div class="field" style="margin-bottom:10px;">
+      <label for="new-block-question">Question d'entrevue</label>
+      <textarea id="new-block-question" rows="2" placeholder="Ex. Quelles considérations d'accessibilité sont prioritaires dans votre domaine ?"></textarea>
+    </div>
+    <div class="field" style="margin-bottom:10px;">
+      <label for="new-block-hint">Piste de réflexion (optionnel)</label>
+      <textarea id="new-block-hint" rows="2" placeholder="Une suggestion ou un exemple pour amorcer la réflexion."></textarea>
+    </div>
+    <div class="field" style="margin-bottom:10px;">
+      <label for="new-block-size">Taille du bloc</label>
+      <select id="new-block-size">
+        <option value="col-4">Petit (1/3 de la largeur)</option>
+        <option value="col-6">Moyen (1/2 de la largeur)</option>
+        <option value="col-8">Grand (2/3 de la largeur)</option>
+        <option value="col-12">Pleine largeur</option>
+      </select>
+    </div>
+    <div class="field" style="margin-bottom:10px;">
+      <label for="new-block-theme">Style</label>
+      <select id="new-block-theme">
+        <option value="light">Clair</option>
+        <option value="dark">Sombre</option>
+        <option value="gray">Gris</option>
+        <option value="accent">Accent</option>
+      </select>
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn--ghost" id="modal-add-cancel" type="button">Annuler</button>
+      <button class="btn btn--accent" id="modal-add-save" type="button">Ajouter le bloc</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- Librairies d'export PDF (CDN) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script src="js/data.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/blocks.js"></script>
+<script src="js/pdf-export.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
