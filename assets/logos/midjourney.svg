@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Midjourney">
+  <rect width="256" height="256" rx="40" fill="#0B0B0C"/>
+  <path d="M30 176c20-58 46-96 98-96s78 38 98 96c-26-34-58-50-98-50s-72 16-98 50Z" fill="#FFFFFF"/>
+  <path d="M48 196c16-40 40-66 80-66s64 26 80 66c-22-26-48-38-80-38s-58 12-80 38Z" fill="#FFFFFF" opacity="0.55"/>
+</svg>
