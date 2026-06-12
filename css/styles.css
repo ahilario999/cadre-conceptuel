@@ -1333,6 +1333,22 @@ html[data-theme="dark"] .btn--ghost { background: transparent; color: var(--whit
 }
 .qa-field textarea:focus { border-color: var(--accent); }
 
+/* Aide à la rédaction (IA) — bouton « Suggérer un brouillon » */
+.qa-field__ai {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.qa-field__ai-btn svg { width: 14px; height: 14px; }
+.qa-field__ai-status {
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: var(--gray-600);
+}
+.qa-field__ai-status--error { color: var(--accent); }
+html[data-theme="dark"] .qa-field__ai-status { color: var(--gray-600); }
+
 /* Champ "Étiquette du bloc" — optionnel, visuellement plus discret. */
 .qa-field--badge {
   background: transparent;
@@ -1353,6 +1369,22 @@ html[data-theme="dark"] .btn--ghost { background: transparent; color: var(--whit
   width: 100%;
 }
 .qa-field--badge input[type="text"]:focus { border-color: var(--accent); outline: none; }
+
+/* Aide à la rédaction (IA) — bouton « Suggérer un brouillon » */
+.qa-field__ai {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.qa-field__ai-btn svg { width: 14px; height: 14px; }
+.qa-field__ai-status {
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: var(--gray-600);
+}
+.qa-field__ai-status--error { color: var(--accent); }
+html[data-theme="dark"] .qa-field__ai-status { color: var(--gray-600); }
 
 /* aperçu en direct : mini carte conceptuelle qui se construit ------------- */
 .atelier__preview {
