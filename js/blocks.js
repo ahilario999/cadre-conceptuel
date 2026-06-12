@@ -352,6 +352,77 @@ function renderBodyView(block, state) {
 }
 
 /* ----------------------------------------------------------------------- */
+/* Aide à la rédaction (IA) — bouton « Suggérer un brouillon »              */
+/* Disponible sur chaque champ de type question/réponse. Appelle l'API      */
+/* serverless /api/suggest (proxy Groq) et propose un texte de départ que   */
+/* la personne peut ensuite modifier librement.                             */
+/* ----------------------------------------------------------------------- */
+function buildSuggestTools(ta, q, block, state) {
+  const wrap = document.createElement("div");
+  wrap.className = "qa-field__ai";
+
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "btn btn--ghost btn--sm qa-field__ai-btn";
+  const idleLabel = `${icon("spark")}<span>Suggérer un brouillon</span>`;
+  const loadingLabel = `${icon("spark")}<span>Génération en cours…</span>`;
+  btn.innerHTML = idleLabel;
+
+  const status = document.createElement("span");
+  status.className = "qa-field__ai-status";
+  status.setAttribute("role", "status");
+  status.setAttribute("aria-live", "polite");
+
+  btn.addEventListener("click", async () => {
+    if (ta.value.trim()) {
+      const ok = confirm("Remplacer le texte actuel par une suggestion de l'IA ?");
+      if (!ok) return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = loadingLabel;
+    status.textContent = "";
+    status.classList.remove("qa-field__ai-status--error");
+
+    try {
+      const meta = (state && state.meta) || {};
+      const response = await fetch("/api/suggest", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          question: q.label || "",
+          hint: q.hint || "",
+          blockTitle: block.title || "",
+          blockDescription: block.description || "",
+          programName: meta.programName || "",
+          role: meta.role || "",
+        }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.suggestion) {
+        throw new Error(data.error || "Suggestion indisponible.");
+      }
+
+      ta.value = data.suggestion;
+      ta.dispatchEvent(new Event("input", { bubbles: true }));
+      ta.focus();
+    } catch (err) {
+      status.classList.add("qa-field__ai-status--error");
+      status.textContent =
+        "Suggestion indisponible pour le moment. Vous pouvez réessayer plus tard.";
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = idleLabel;
+    }
+  });
+
+  wrap.appendChild(btn);
+  wrap.appendChild(status);
+  return wrap;
+}
+
+/* ----------------------------------------------------------------------- */
 /* ÉDITEURS (entrevue + modale)                                              */
 /* Chaque éditeur reçoit : (container, block, step, state, ctx)             */
 /* ctx = { onChange, getHintHtml }                                           */
@@ -425,6 +496,7 @@ function renderEditor(container, block, step, state, ctx) {
         ctx.onChange();
       });
       field.appendChild(ta);
+      field.appendChild(buildSuggestTools(ta, q, block, state));
 
       group.appendChild(field);
     });
