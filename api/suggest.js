@@ -45,6 +45,7 @@ module.exports = async function handler(req, res) {
   const blockDescription = String(body.blockDescription || "").trim();
   const programName = String(body.programName || "").trim();
   const role = String(body.role || "").trim();
+  const format = String(body.format || "qa").trim() === "liste" ? "liste" : "qa";
 
   if (!question) {
     res.status(400).json({ error: "La question est manquante." });
@@ -61,14 +62,36 @@ module.exports = async function handler(req, res) {
     .filter(Boolean)
     .join("\n");
 
-  const systemPrompt = [
-    "Tu aides une personne enseignante ou un membre du personnel d'un collège à rédiger son « Cadre conceptuel » personnel sur l'intégration de l'intelligence artificielle générative dans son enseignement.",
-    "On te donne une question de réflexion. Propose un court brouillon de réponse (3 à 5 phrases), en français canadien, vouvoiement, écrit à la première personne, comme point de départ que la personne pourra ensuite modifier et personnaliser.",
-    "Ton réflexif, concret et nuancé — éviter le ton publicitaire ou les généralités creuses.",
-    "Réponds uniquement avec le texte du brouillon : aucun titre, aucune liste à puces, aucun guillemet, aucun préambule.",
-  ].join(" ");
+  // Règle commune : toujours rester court et précis, peu importe le format.
+  const baseIntro =
+    "Tu aides une personne enseignante ou un membre du personnel d'un collège à rédiger son « Cadre conceptuel » personnel sur l'intégration de l'intelligence artificielle générative dans son enseignement. Sois toujours court et précis : aucun remplissage, aucune généralité creuse, aucune répétition, aucun ton publicitaire.";
 
-  const userPrompt = `${contextLines ? contextLines + "\n\n" : ""}Question : ${question}\n\nPropose un brouillon de réponse (3 à 5 phrases).`;
+  let systemPrompt;
+  let userPrompt;
+  let maxTokens;
+
+  if (format === "liste") {
+    // Champs de type « une idée/tâche par ligne » (ex. Partage des tâches,
+    // Boîte à outils) : on attend une courte liste de mots-clés, pas des phrases.
+    systemPrompt = [
+      baseIntro,
+      "On te donne une question liée à une liste d'éléments ou de tâches courtes.",
+      "Propose une courte liste de 3 à 6 éléments concrets, un élément par ligne, chacun en 1 à 3 mots maximum (mots-clés ou courtes expressions, jamais de phrases complètes).",
+      "Réponds uniquement avec les éléments, un par ligne : aucune puce, aucun tiret, aucun numéro, aucune ponctuation finale, aucun préambule.",
+    ].join(" ");
+    userPrompt = `${contextLines ? contextLines + "\n\n" : ""}Question : ${question}\n\nPropose une courte liste (un élément par ligne, 1 à 3 mots chacun, 3 à 6 éléments).`;
+    maxTokens = 80;
+  } else {
+    // Champs de type question/réponse (Éthique, Intention, Conception, etc.).
+    systemPrompt = [
+      baseIntro,
+      "On te donne une question de réflexion. Propose un court brouillon de réponse (2 à 3 phrases maximum), en français canadien, vouvoiement, écrit à la première personne, comme point de départ que la personne pourra ensuite modifier et personnaliser.",
+      "Ton réflexif, concret et nuancé.",
+      "Réponds uniquement avec le texte du brouillon : aucun titre, aucune liste à puces, aucun guillemet, aucun préambule.",
+    ].join(" ");
+    userPrompt = `${contextLines ? contextLines + "\n\n" : ""}Question : ${question}\n\nPropose un brouillon de réponse (2 à 3 phrases maximum).`;
+    maxTokens = 160;
+  }
 
   try {
     const groqRes = await fetch(GROQ_URL, {
@@ -84,7 +107,7 @@ module.exports = async function handler(req, res) {
           { role: "user", content: userPrompt },
         ],
         temperature: 0.7,
-        max_tokens: 240,
+        max_tokens: maxTokens,
       }),
     });
 
