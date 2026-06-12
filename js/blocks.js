@@ -357,7 +357,7 @@ function renderBodyView(block, state) {
 /* serverless /api/suggest (proxy Groq) et propose un texte de départ que   */
 /* la personne peut ensuite modifier librement.                             */
 /* ----------------------------------------------------------------------- */
-function buildSuggestTools(ta, q, block, state) {
+function buildSuggestTools(ta, q, block, state, format) {
   const wrap = document.createElement("div");
   wrap.className = "qa-field__ai";
 
@@ -396,6 +396,7 @@ function buildSuggestTools(ta, q, block, state) {
           blockDescription: block.description || "",
           programName: meta.programName || "",
           role: meta.role || "",
+          format: format === "liste" ? "liste" : "qa",
         }),
       });
 
@@ -496,7 +497,7 @@ function renderEditor(container, block, step, state, ctx) {
         ctx.onChange();
       });
       field.appendChild(ta);
-      field.appendChild(buildSuggestTools(ta, q, block, state));
+      field.appendChild(buildSuggestTools(ta, q, block, state, "qa"));
 
       group.appendChild(field);
     });
@@ -610,6 +611,17 @@ function renderEditor(container, block, step, state, ctx) {
       state.answers["partage-2"] = e.target.value;
       ctx.onChange();
     });
+
+    const leftTa = wrap.querySelector("#left-items");
+    const rightTa = wrap.querySelector("#right-items");
+    const qLeft = block.questions.find((q) => q.column === "left");
+    const qRight = block.questions.find((q) => q.column === "right");
+    wrap.querySelector(".split-editor__col--left").appendChild(
+      buildSuggestTools(leftTa, qLeft, block, state, "liste")
+    );
+    wrap.querySelector(".split-editor__col--right").appendChild(
+      buildSuggestTools(rightTa, qRight, block, state, "liste")
+    );
     return;
   }
 
@@ -717,10 +729,14 @@ function renderEditor(container, block, step, state, ctx) {
         <p>${escapeHtml(col.hint || "")}</p>
         <textarea aria-label="${escapeHtml(col.title)}" placeholder="Un élément par ligne...">${escapeHtml(data.columns[col.id] || "")}</textarea>
       `;
-      colDiv.querySelector("textarea").addEventListener("input", (e) => {
+      const colTa = colDiv.querySelector("textarea");
+      colTa.addEventListener("input", (e) => {
         data.columns[col.id] = e.target.value;
         ctx.onChange();
       });
+      colDiv.appendChild(
+        buildSuggestTools(colTa, { label: col.title, hint: col.hint }, block, state, "liste")
+      );
       wrap.appendChild(colDiv);
     });
     container.appendChild(wrap);
