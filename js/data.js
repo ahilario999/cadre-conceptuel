@@ -99,8 +99,8 @@ const BLOCK_LIBRARY = [
   },
   {
     id: "conception",
-    title: "Conception",
-    subtitle: "Le processus",
+    title: "Pratique",
+    subtitle: "Comment agir",
     tag: "COMMENT vous concevez",
     badge: "I.D.É.E. — Idéer • Développer • Évaluer • Exécuter",
     size: "col-4",
@@ -206,7 +206,7 @@ const BLOCK_LIBRARY = [
     description:
       "Pour chaque étape de votre processus, précisez ce qui revient à la personne et ce que l'IA peut soutenir.",
     rowHint:
-      "Vous pouvez renommer ces étapes pour qu'elles correspondent à votre processus (section Conception ci-dessus).",
+      "Vous pouvez renommer ces étapes pour qu'elles correspondent à votre processus (section Pratique ci-dessus).",
     rows: [
       { id: "concevoir", label: "Concevoir" },
       { id: "developper", label: "Développer" },
