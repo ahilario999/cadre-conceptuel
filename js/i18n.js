@@ -474,7 +474,7 @@ const BLOCK_LIBRARY_EN = {
         "Tip: repetitive, exploratory or technical tasks (research, drafts, variations, formatting, data summaries).",
     },
     right: {
-      title: "Conceptual intentions",
+      title: "Human intentions",
       label: "ONLY YOU can bring",
       hint:
         "Tip: critical judgment, vision, human connection, coherence, personal signature, ethical sense and storytelling.",

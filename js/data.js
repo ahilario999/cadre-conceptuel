@@ -175,7 +175,7 @@ const BLOCK_LIBRARY = [
     },
     right: {
       id: "intentions",
-      title: "Intentions conceptuelles",
+      title: "Intentions humaines",
       label: "VOUS SEUL·E pouvez apporter",
       defaultPercent: 60,
       hint:
