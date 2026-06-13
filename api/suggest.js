@@ -45,7 +45,12 @@ module.exports = async function handler(req, res) {
   const blockDescription = String(body.blockDescription || "").trim();
   const programName = String(body.programName || "").trim();
   const role = String(body.role || "").trim();
-  const format = String(body.format || "qa").trim() === "liste" ? "liste" : "qa";
+  const allowedFormats = ["qa", "liste", "phrase", "outils", "table"];
+  const format = allowedFormats.includes(String(body.format || "").trim())
+    ? String(body.format).trim()
+    : "qa";
+  const rows = Array.isArray(body.rows) ? body.rows.map((r) => String(r || "").trim()).filter(Boolean) : [];
+  const columns = Array.isArray(body.columns) ? body.columns.map((c) => String(c || "").trim()).filter(Boolean) : [];
 
   if (!question) {
     res.status(400).json({ error: "La question est manquante." });
@@ -62,9 +67,10 @@ module.exports = async function handler(req, res) {
     .filter(Boolean)
     .join("\n");
 
-  // Règle commune : toujours rester court et précis, peu importe le format.
+  // Règle commune : toujours rester court et précis, et toujours ancrer la
+  // réponse dans le rôle / la profession de la personne, peu importe le format.
   const baseIntro =
-    "Tu aides une personne enseignante ou un membre du personnel d'un collège à rédiger son « Cadre conceptuel » personnel sur l'intégration de l'intelligence artificielle générative dans son enseignement. Sois toujours court et précis : aucun remplissage, aucune généralité creuse, aucune répétition, aucun ton publicitaire.";
+    "Tu aides une personne enseignante ou un membre du personnel d'un collège à rédiger son « Cadre conceptuel » personnel sur l'intégration de l'intelligence artificielle générative dans son enseignement. Sois toujours court et précis : aucun remplissage, aucune généralité creuse, aucune répétition, aucun ton publicitaire. Ancre toujours ta proposition dans le rôle et le domaine d'enseignement précisés ci-dessus (s'ils sont fournis) plutôt que de rester générique.";
 
   let systemPrompt;
   let userPrompt;
@@ -81,6 +87,40 @@ module.exports = async function handler(req, res) {
     ].join(" ");
     userPrompt = `${contextLines ? contextLines + "\n\n" : ""}Question : ${question}\n\nPropose une courte liste (un élément par ligne, 1 à 3 mots chacun, 3 à 6 éléments).`;
     maxTokens = 80;
+  } else if (format === "phrase") {
+    // Bloc « Phrase-clé » : une seule phrase courte et percutante.
+    systemPrompt = [
+      baseIntro,
+      "On te donne une section qui demande une seule phrase-clé, courte et percutante, qui pourrait apparaître seule sur une diapositive.",
+      "Propose UNE seule phrase (maximum 12 mots), en français canadien, dans le langage de la personne, qui résume sa posture par rapport à l'IA dans son enseignement.",
+      "Réponds uniquement avec cette phrase : aucun guillemet, aucun point final superflu, aucun préambule, une seule ligne.",
+    ].join(" ");
+    userPrompt = `${contextLines ? contextLines + "\n\n" : ""}Question : ${question}\n\nPropose une seule phrase-clé courte et percutante (maximum 12 mots).`;
+    maxTokens = 40;
+  } else if (format === "outils") {
+    // Bloc « Outils IA » : liste d'outils pertinents avec leur usage.
+    systemPrompt = [
+      baseIntro,
+      "On te donne une section qui demande une liste d'outils numériques ou d'IA pertinents pour le domaine d'enseignement de la personne, chacun avec son usage principal.",
+      "Propose 3 à 5 outils concrets et pertinents pour ce domaine, chacun avec son usage principal en 1 à 2 mots.",
+      "Réponds avec une ligne par outil, au format exact « Nom de l'outil — usage » (avec un tiret cadratin — entre le nom et l'usage) : aucune puce, aucun numéro, aucun préambule.",
+    ].join(" ");
+    userPrompt = `${contextLines ? contextLines + "\n\n" : ""}Question : ${question}\n\nPropose 3 à 5 outils pertinents avec leur usage, un par ligne, au format « Nom — usage ».`;
+    maxTokens = 120;
+  } else if (format === "table") {
+    // Bloc « Qui fait quoi ? » : pour chaque étape, une courte description du
+    // rôle de la personne et de celui de l'IA.
+    const rowsList = rows.length ? rows.join(", ") : "Concevoir, Développer, Évaluer, Exécuter";
+    const colHuman = columns[0] || "la personne";
+    const colAi = columns[1] || "l'IA";
+    systemPrompt = [
+      baseIntro,
+      `On te donne une liste d'étapes d'un processus de travail. Pour CHAQUE étape, propose une très courte description (2 à 4 mots, jamais de phrase complète) de ce que fait « ${colHuman} » et de ce que peut faire « ${colAi} ».`,
+      "Réponds avec exactement une ligne par étape, dans le même ordre que les étapes fournies, au format exact « Étape : description personne | description IA ».",
+      "Aucune ligne supplémentaire, aucun titre, aucune puce, aucun préambule.",
+    ].join(" ");
+    userPrompt = `${contextLines ? contextLines + "\n\n" : ""}Question : ${question}\n\nÉtapes (dans l'ordre) : ${rowsList}\n\nPropose une ligne par étape, au format « Étape : <${colHuman}> | <${colAi}> ».`;
+    maxTokens = 200;
   } else {
     // Champs de type question/réponse (Éthique, Intention, Conception, etc.).
     systemPrompt = [
