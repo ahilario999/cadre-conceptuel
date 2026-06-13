@@ -367,6 +367,30 @@ function renderBodyView(block, state) {
 /* serverless /api/suggest (proxy Groq) et propose un texte de départ que   */
 /* la personne peut ensuite modifier librement.                             */
 /* ----------------------------------------------------------------------- */
+/* Construit un court résumé (par bloc) des réponses déjà rédigées ailleurs
+ * dans le cadre conceptuel, pour aider l'IA à cibler le domaine d'expertise
+ * de la personne sans avoir à lui envoyer tout le cadre. */
+function buildContextSummary(state, block) {
+  const lib = window.CADRE_I18N.getBlockLibrary(lang(state));
+  const parts = [];
+  let total = 0;
+  const MAX_TOTAL = 500;
+  lib.forEach((b) => {
+    if (b.id === block.id) return;
+    if ((state.enabledBlocks || []).indexOf(b.id) === -1) return;
+    (b.questions || []).forEach((q) => {
+      const val = state.answers && state.answers[q.id];
+      const text = val != null ? String(val).trim() : "";
+      if (!text) return;
+      const line = `${b.title} — ${text.slice(0, 160)}`;
+      if (total + line.length > MAX_TOTAL) return;
+      parts.push(line);
+      total += line.length;
+    });
+  });
+  return parts.join("\n");
+}
+
 function requestSuggestion(block, state, q, format, extra) {
   const meta = (state && state.meta) || {};
   return fetch("/api/suggest", {
@@ -383,6 +407,7 @@ function requestSuggestion(block, state, q, format, extra) {
           role: meta.role || "",
           format: format || "qa",
           lang: meta.lang || "fr",
+          contextSummary: buildContextSummary(state, block),
         },
         extra || {}
       )
@@ -433,7 +458,7 @@ function buildSuggestTools(ta, q, block, state, format) {
     status.classList.remove("qa-field__ai-status--error");
 
     try {
-      const suggestion = await requestSuggestion(block, state, q, format === "liste" ? "liste" : "qa");
+      const suggestion = await requestSuggestion(block, state, q, format === "liste" || format === "liste-outils" ? format : "qa");
       ta.value = suggestion;
       ta.dispatchEvent(new Event("input", { bubbles: true }));
       ta.focus();
@@ -925,7 +950,7 @@ function renderEditor(container, block, step, state, ctx) {
         ctx.onChange();
       });
       colDiv.appendChild(
-        buildSuggestTools(colTa, { label: col.title, hint: col.hint }, block, state, "liste")
+        buildSuggestTools(colTa, { label: col.title, hint: col.hint }, block, state, "liste-outils")
       );
       wrap.appendChild(colDiv);
     });
