@@ -825,6 +825,7 @@
     saveState(true);
     applyTranslations();
     applyMetaToUI();
+    populateConfigFields();
     renderColorPresets();
     renderBlockToggleList();
 

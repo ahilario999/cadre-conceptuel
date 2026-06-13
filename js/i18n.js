@@ -41,7 +41,7 @@ const UI_STRINGS = {
     labelInstitution: "Établissement",
     placeholderInstitution: "Ex. La Cité",
     labelAuthorName: "Votre nom (optionnel)",
-    placeholderAuthorName: "Ex. Antonio Hilario",
+    placeholderAuthorName: "Ex. Sam Tremblay",
     labelRole: "Votre rôle ou titre professionnel",
     placeholderRole: "Ex. Designer graphique, Enseignant·e",
     hintRole:
@@ -56,12 +56,12 @@ const UI_STRINGS = {
     fieldLabelLogo: "Logo (programme ou établissement)",
     logoDropzoneHtml:
       "<strong>Cliquez pour téléverser</strong> ou glissez une image ici (PNG/SVG, fond transparent recommandé).",
-    section2Appearance: "2 — Apparence",
+    section2Appearance: "Apparence",
     fieldLabelAccent: "Couleur d'accent",
     ariaAccentPresets: "Couleurs d'accent prédéfinies",
     ariaAccentCustom: "Couleur d'accent personnalisée",
     labelCustomColor: "Personnalisée",
-    section3Blocks: "3 — Blocs du cadre",
+    section3Blocks: "2 — Blocs du cadre",
     hintBlocksConfig:
       "Activez, désactivez ou réordonnez les blocs selon votre champ d'expertise. Vous pourrez aussi en ajouter plus tard.",
     btnAddCustomBlock: "Ajouter un bloc personnalisé",
@@ -219,7 +219,7 @@ const UI_STRINGS = {
     labelInstitution: "Institution",
     placeholderInstitution: "E.g. La Cité",
     labelAuthorName: "Your name (optional)",
-    placeholderAuthorName: "E.g. Antonio Hilario",
+    placeholderAuthorName: "E.g. Sam Tremblay",
     labelRole: "Your role or professional title",
     placeholderRole: "E.g. Graphic Designer, Teacher",
     hintRole:
@@ -234,12 +234,12 @@ const UI_STRINGS = {
     fieldLabelLogo: "Logo (program or institution)",
     logoDropzoneHtml:
       "<strong>Click to upload</strong> or drag an image here (PNG/SVG, transparent background recommended).",
-    section2Appearance: "2 — Appearance",
+    section2Appearance: "Appearance",
     fieldLabelAccent: "Accent color",
     ariaAccentPresets: "Preset accent colors",
     ariaAccentCustom: "Custom accent color",
     labelCustomColor: "Custom",
-    section3Blocks: "3 — Framework blocks",
+    section3Blocks: "2 — Framework blocks",
     hintBlocksConfig:
       "Enable, disable or reorder the blocks according to your field of expertise. You can also add more later.",
     btnAddCustomBlock: "Add a custom block",
