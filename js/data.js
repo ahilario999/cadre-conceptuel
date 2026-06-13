@@ -26,6 +26,7 @@ const ACCENT_PRESETS = [
 ];
 
 const DEFAULT_META = {
+  lang: "fr", // "fr" | "en"
   title: "Le [praticien] dans la boucle",
   tagline: "PENSE • CONÇOIT • JUGE • CRÉE",
   quote: "« La créativité ne se délègue pas. Elle se nourrit. »",

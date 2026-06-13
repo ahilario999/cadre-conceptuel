@@ -7,6 +7,7 @@
 (function () {
   const { BLOCK_LIBRARY, ACCENT_PRESETS, createDefaultState } = window.CADRE_DATA;
   const { UI_ICONS } = window.CADRE_ICONS;
+  const { getBlockLibrary, t, ACCENT_NAMES_EN, translateDefaultMeta } = window.CADRE_I18N;
   const {
     ensureBlockData,
     buildSteps,
@@ -23,6 +24,17 @@
   let steps = [];
   let saveTimer = null;
   let modalContext = null; // { blockId, snapshot }
+
+  /* ----------------------------------------------------------------- */
+  /* Langue                                                              */
+  /* ----------------------------------------------------------------- */
+  function lang() {
+    return state && state.meta && state.meta.lang === "en" ? "en" : "fr";
+  }
+
+  function tr(key, vars) {
+    return t(lang(), key, vars);
+  }
 
   /* ----------------------------------------------------------------- */
   /* État                                                                */
@@ -75,7 +87,7 @@
 
   function getBlockDef(id) {
     return (
-      BLOCK_LIBRARY.find((b) => b.id === id) ||
+      getBlockLibrary(lang()).find((b) => b.id === id) ||
       (state.customBlocks || []).find((b) => b.id === id)
     );
   }
@@ -142,10 +154,10 @@
     const best = Math.max(ratioWhite, ratioBlack);
     if (best < 3) {
       note.className = "contrast-note is-warning";
-      note.innerHTML = `${UI_ICONS.alert} Cette couleur peut être difficile à lire en texte. Elle reste utilisable comme fond de bloc.`;
+      note.innerHTML = `${UI_ICONS.alert} ${tr("contrastWarning")}`;
     } else {
       note.className = "contrast-note is-ok";
-      note.innerHTML = `${UI_ICONS.check} Bon contraste : cette couleur est lisible en texte sur fond clair ou sombre.`;
+      note.innerHTML = `${UI_ICONS.check} ${tr("contrastOk")}`;
     }
   }
 
@@ -157,7 +169,7 @@
     document.documentElement.setAttribute("data-theme", theme);
     const label = document.getElementById("theme-toggle-label");
     const btn = document.getElementById("btn-theme-toggle");
-    if (label) label.textContent = theme === "dark" ? "Mode clair" : "Mode sombre";
+    if (label) label.textContent = theme === "dark" ? tr("themeToggleLight") : tr("themeToggleDark");
     if (btn) btn.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
   }
 
@@ -190,16 +202,16 @@
   /* ----------------------------------------------------------------- */
   function renderLogo(container, dataUrl) {
     container.innerHTML = dataUrl
-      ? `<img src="${dataUrl}" alt="Logo du programme ou de l'établissement" />`
+      ? `<img src="${dataUrl}" alt="${tr("ariaLogoAlt")}" />`
       : UI_ICONS.logoPlaceholder;
   }
 
   function applyMetaToUI() {
-    document.getElementById("header-title").textContent = state.meta.title || "Le praticien dans la boucle";
+    document.getElementById("header-title").textContent = state.meta.title || tr("headerTitleDefault");
     const program = state.meta.programName || "";
     const inst = state.meta.institutionName || "";
     document.getElementById("header-subtitle").textContent =
-      [program, inst].filter(Boolean).join(" · ") || "Cadre conceptuel — IA & mon domaine";
+      [program, inst].filter(Boolean).join(" · ") || tr("headerSubtitleDefault");
     renderLogo(document.getElementById("header-logo"), state.meta.logoDataUrl);
     renderLogo(document.getElementById("logo-preview"), state.meta.logoDataUrl);
     applyAccentColor(state.meta.accentColor);
@@ -265,8 +277,9 @@
       btn.type = "button";
       btn.className = "color-swatch";
       btn.style.background = preset.value;
-      btn.title = preset.name;
-      btn.setAttribute("aria-label", `Couleur ${preset.name}`);
+      const presetName = lang() === "en" ? ACCENT_NAMES_EN[preset.name] || preset.name : preset.name;
+      btn.title = presetName;
+      btn.setAttribute("aria-label", tr("ariaColorPreset", { name: presetName }));
       if (state.meta.accentColor.toLowerCase() === preset.value.toLowerCase()) {
         btn.classList.add("is-selected");
       }
@@ -296,10 +309,10 @@
           <div class="block-toggle__title">${block.title}</div>
           <div class="block-toggle__sub">${block.subtitle || ""}</div>
         </div>
-        <button type="button" class="btn btn--icon btn--ghost btn--sm" data-move="up" aria-label="Monter le bloc ${block.title}" ${idx === 0 ? "disabled" : ""}>${UI_ICONS.arrowLeft.replace('viewBox="0 0 24 24"', 'viewBox="0 0 24 24" style="transform:rotate(90deg)"')}</button>
-        <button type="button" class="btn btn--icon btn--ghost btn--sm" data-move="down" aria-label="Descendre le bloc ${block.title}" ${idx === state.blockOrder.length - 1 ? "disabled" : ""}>${UI_ICONS.arrowRight.replace('viewBox="0 0 24 24"', 'viewBox="0 0 24 24" style="transform:rotate(90deg)"')}</button>
+        <button type="button" class="btn btn--icon btn--ghost btn--sm" data-move="up" aria-label="${tr("ariaMoveBlockUp", { title: block.title })}" ${idx === 0 ? "disabled" : ""}>${UI_ICONS.arrowLeft.replace('viewBox="0 0 24 24"', 'viewBox="0 0 24 24" style="transform:rotate(90deg)"')}</button>
+        <button type="button" class="btn btn--icon btn--ghost btn--sm" data-move="down" aria-label="${tr("ariaMoveBlockDown", { title: block.title })}" ${idx === state.blockOrder.length - 1 ? "disabled" : ""}>${UI_ICONS.arrowRight.replace('viewBox="0 0 24 24"', 'viewBox="0 0 24 24" style="transform:rotate(90deg)"')}</button>
         <label class="switch">
-          <input type="checkbox" ${enabled ? "checked" : ""} aria-label="Activer le bloc ${block.title}" />
+          <input type="checkbox" ${enabled ? "checked" : ""} aria-label="${tr("ariaEnableBlock", { title: block.title })}" />
           <span class="switch__track"></span>
         </label>
       `;
@@ -334,7 +347,7 @@
   function startInterview() {
     steps = buildSteps(state, getBlockDef);
     if (!steps.length) {
-      showToast("Active au moins un bloc avant de commencer l'entrevue.");
+      showToast(tr("toastNoActiveBlock"));
       return;
     }
     state.currentStep = Math.min(state.currentStep || 0, steps.length - 1);
@@ -354,8 +367,11 @@
       wrap.appendChild(seg);
     });
     const current = getBlockDef(steps[state.currentStep].blockId);
-    document.getElementById("interview-progress-label").textContent =
-      `Bloc ${state.currentStep + 1} sur ${steps.length} — ${current.title}`;
+    document.getElementById("interview-progress-label").textContent = tr("progressLabel", {
+      current: state.currentStep + 1,
+      total: steps.length,
+      title: current.title,
+    });
   }
 
   function renderStep() {
@@ -394,8 +410,8 @@
     document.getElementById("btn-prev-step").disabled = state.currentStep === 0;
     document.getElementById("btn-next-step").innerHTML =
       state.currentStep === steps.length - 1
-        ? `Voir l'aperçu ${UI_ICONS.arrowRight}`
-        : `Suivant ${UI_ICONS.arrowRight}`;
+        ? `${tr("btnSeeOverview")} ${UI_ICONS.arrowRight}`
+        : `${tr("btnNext")} ${UI_ICONS.arrowRight}`;
 
     renderPreview();
     saveState();
@@ -490,7 +506,7 @@
     document.getElementById("btn-toggle-hint").addEventListener("click", (e) => {
       const hintBox = document.getElementById("interview-hint");
       hintBox.hidden = !hintBox.hidden;
-      e.target.textContent = hintBox.hidden ? "Voir la piste" : "Masquer la piste";
+      e.target.textContent = hintBox.hidden ? tr("btnToggleHintShow") : tr("btnToggleHintHide");
     });
   }
 
@@ -502,7 +518,7 @@
     grid.innerHTML = "";
 
     if (!state.enabledBlocks.length) {
-      grid.innerHTML = `<div class="empty-state col-12">${UI_ICONS.grid}<p>Aucun bloc actif. Ajoutez un bloc ou retournez à la configuration.</p></div>`;
+      grid.innerHTML = `<div class="empty-state col-12">${UI_ICONS.grid}<p>${tr("emptyStateOverview")}</p></div>`;
     }
 
     state.blockOrder
@@ -514,14 +530,12 @@
           clickable: true,
           removable: true,
           onRemove: (blockId) => {
-            const ok = confirm(
-              `Retirer le bloc « ${block.title} » du cadre ?\n\nVos réponses pour ce bloc restent en mémoire : vous pourrez le réactiver dans la configuration sans perdre votre travail.`
-            );
+            const ok = confirm(tr("confirmRemoveBlock", { title: block.title }));
             if (!ok) return;
             state.enabledBlocks = state.enabledBlocks.filter((x) => x !== blockId);
             saveState();
             renderOverview();
-            showToast(`Bloc « ${block.title} » retiré. Vous pouvez le réactiver dans la configuration.`);
+            showToast(tr("toastBlockRemoved", { title: block.title }));
           },
         });
         card.addEventListener("click", () => openEditModal(id));
@@ -539,7 +553,7 @@
     addCard.className = "add-block-card col-4";
     addCard.setAttribute("role", "button");
     addCard.setAttribute("tabindex", "0");
-    addCard.innerHTML = `${UI_ICONS.plus}<span>Ajouter un bloc</span>`;
+    addCard.innerHTML = `${UI_ICONS.plus}<span>${tr("btnAddBlock")}</span>`;
     addCard.addEventListener("click", () => openAddBlockModal());
     addCard.addEventListener("keydown", (e) => {
       if (e.key === "Enter" || e.key === " ") {
@@ -601,7 +615,7 @@
           const hintBox = document.createElement("div");
           hintBox.className = "hint-box";
           hintBox.innerHTML = `<div class="hint-box__icon">${UI_ICONS.spark}</div>
-            <div class="hint-box__text"><span class="hint-box__label">Piste de réflexion</span>${hint}</div>`;
+            <div class="hint-box__text"><span class="hint-box__label">${tr("hintLabel")}</span>${hint}</div>`;
           section.appendChild(hintBox);
         }
       }
@@ -660,7 +674,7 @@
     const theme = document.getElementById("new-block-theme").value;
 
     if (!title || !question) {
-      showToast("Donne un titre et une question pour ce bloc.");
+      showToast(tr("toastCustomBlockMissing"));
       return;
     }
 
@@ -686,7 +700,7 @@
     closeAddBlockModal();
     renderBlockToggleList();
     if (state.screen === "overview") renderOverview();
-    showToast(`Bloc « ${title} » ajouté.`);
+    showToast(tr("toastCustomBlockAdded", { title }));
   }
 
   /* ----------------------------------------------------------------- */
@@ -704,11 +718,11 @@
         <div class="final-header__logo-text">${state.meta.programName || ""}${state.meta.institutionName ? " · " + state.meta.institutionName : ""}</div>
       </div>
       <div class="final-header__main">
-        <div class="final-header__eyebrow">Cadre conceptuel</div>
+        <div class="final-header__eyebrow">${tr("finalEyebrow")}</div>
         <div class="final-header__title">${state.meta.title || ""}</div>
         ${state.meta.tagline ? `<div class="final-header__tagline">${state.meta.tagline}</div>` : ""}
         ${state.meta.quote ? `<div class="final-header__quote">${state.meta.quote}</div>` : ""}
-        <div class="final-header__meta">${[state.meta.authorName, new Date().toLocaleDateString("fr-CA")].filter(Boolean).join(" — ")}</div>
+        <div class="final-header__meta">${[state.meta.authorName, new Date().toLocaleDateString(tr("localeDateCode"))].filter(Boolean).join(" — ")}</div>
       </div>
     `;
     return header;
@@ -743,7 +757,7 @@
     a.click();
     a.remove();
     URL.revokeObjectURL(url);
-    showToast("Fichier de sauvegarde téléchargé.");
+    showToast(tr("toastJsonDownloaded"));
   }
 
   function loadJSONFile(file) {
@@ -754,18 +768,83 @@
         state = normalizeState(parsed);
         saveState(true);
         initUIFromState();
-        showToast("Sauvegarde importée avec succès.");
+        showToast(tr("toastImportSuccess"));
       } catch (err) {
-        showToast("Ce fichier ne semble pas être une sauvegarde valide.");
+        showToast(tr("toastImportError"));
       }
     };
     reader.readAsText(file);
   }
 
   /* ----------------------------------------------------------------- */
+  /* Application des traductions au DOM                                 */
+  /* ----------------------------------------------------------------- */
+  function applyTranslations() {
+    const l = lang();
+    document.documentElement.lang = l;
+    document.title = tr("pageTitle");
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.setAttribute("content", tr("pageDescription"));
+
+    document.querySelectorAll("[data-i18n]").forEach((el) => {
+      el.textContent = tr(el.dataset.i18n);
+    });
+    document.querySelectorAll("[data-i18n-html]").forEach((el) => {
+      el.innerHTML = tr(el.dataset.i18nHtml);
+    });
+    document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
+      el.setAttribute("placeholder", tr(el.dataset.i18nPlaceholder));
+    });
+    document.querySelectorAll("[data-i18n-aria-label]").forEach((el) => {
+      el.setAttribute("aria-label", tr(el.dataset.i18nAriaLabel));
+    });
+    document.querySelectorAll("[data-i18n-content]").forEach((el) => {
+      el.setAttribute("content", tr(el.dataset.i18nContent));
+    });
+
+    const btnFr = document.getElementById("btn-lang-fr");
+    const btnEn = document.getElementById("btn-lang-en");
+    if (btnFr && btnEn) {
+      btnFr.classList.toggle("is-active", l === "fr");
+      btnEn.classList.toggle("is-active", l === "en");
+      btnFr.setAttribute("aria-pressed", l === "fr" ? "true" : "false");
+      btnEn.setAttribute("aria-pressed", l === "en" ? "true" : "false");
+    }
+
+    applyTheme();
+  }
+
+  /* ----------------------------------------------------------------- */
+  /* Changement de langue                                                */
+  /* ----------------------------------------------------------------- */
+  function setLang(newLang) {
+    const l = newLang === "en" ? "en" : "fr";
+    if (state.meta.lang === l) return;
+    translateDefaultMeta(state.meta, state.meta.lang, l);
+    state.meta.lang = l;
+    saveState(true);
+    applyTranslations();
+    applyMetaToUI();
+    renderColorPresets();
+    renderBlockToggleList();
+
+    steps = buildSteps(state, getBlockDef);
+
+    if (state.screen === "interview" && steps.length) {
+      state.currentStep = Math.min(state.currentStep, steps.length - 1);
+      renderStep();
+    } else if (state.screen === "overview") {
+      renderOverview();
+    } else if (state.screen === "final") {
+      renderFinal();
+    }
+  }
+
+  /* ----------------------------------------------------------------- */
   /* Initialisation UI depuis l'état (utilisé au chargement et après import) */
   /* ----------------------------------------------------------------- */
   function initUIFromState() {
+    applyTranslations();
     applyMetaToUI();
     populateConfigFields();
     renderColorPresets();
@@ -878,7 +957,7 @@
     document.getElementById("btn-back-to-interview").addEventListener("click", () => {
       steps = buildSteps(state, getBlockDef);
       if (!steps.length) {
-        showToast("Active au moins un bloc avant de continuer.");
+        showToast(tr("toastNoActiveBlockContinue"));
         return;
       }
       state.currentStep = Math.min(state.currentStep, steps.length - 1);
@@ -913,15 +992,15 @@
       const btn = document.getElementById("btn-export-pdf");
       const original = btn.innerHTML;
       btn.disabled = true;
-      btn.innerHTML = "Génération du PDF…";
+      btn.innerHTML = tr("toastPdfGenerating");
       try {
         const name = (state.meta.programName || "cadre-conceptuel").toLowerCase().replace(/[^a-z0-9]+/g, "-");
         await exportElementToPdf("final-card", `cadre-conceptuel-${name}.pdf`);
-        showToast("PDF généré !");
+        showToast(tr("toastPdfSuccess"));
       } catch (err) {
         console.error(err);
         const detail = err && err.message ? ` (${err.message})` : "";
-        showToast(`Erreur lors de la génération du PDF.${detail}`);
+        showToast(tr("toastPdfError", { detail }));
       } finally {
         btn.disabled = false;
         btn.innerHTML = original;
@@ -930,13 +1009,17 @@
     });
 
     document.getElementById("btn-restart").addEventListener("click", () => {
-      if (!confirm("Recommencer effacera votre travail en cours (sauvegardez-le avant si besoin). Continuer ?")) return;
+      if (!confirm(tr("confirmRestart"))) return;
       localStorage.removeItem(STORAGE_KEY);
       state = normalizeState(createDefaultState());
       saveState(true);
       initUIFromState();
-      showToast("Nouveau cadre conceptuel.");
+      showToast(tr("toastNewFramework"));
     });
+
+    // Toggle de langue
+    document.getElementById("btn-lang-fr").addEventListener("click", () => setLang("fr"));
+    document.getElementById("btn-lang-en").addEventListener("click", () => setLang("en"));
 
     // Raccourci clavier : Échap ferme les modales
     document.addEventListener("keydown", (e) => {

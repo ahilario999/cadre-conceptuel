@@ -14,9 +14,18 @@
 
 (function () {
 const { UI_ICONS, getToolIcon, PATTERNS } = window.CADRE_ICONS;
+const { t } = window.CADRE_I18N;
 
 function icon(name) {
   return UI_ICONS[name] || "";
+}
+
+function lang(state) {
+  return state && state.meta && state.meta.lang === "en" ? "en" : "fr";
+}
+
+function tr(state, key, vars) {
+  return t(lang(state), key, vars);
 }
 
 function escapeHtml(str) {
@@ -129,7 +138,8 @@ function patternForBlock(block) {
 /* ----------------------------------------------------------------------- */
 function resolveBlockTitle(block, state) {
   const role = (state.meta && state.meta.role ? state.meta.role : "").trim();
-  return String(block.title || "").replace(/\[Praticien·ne\]/g, role || "Praticien·ne");
+  const fallback = lang(state) === "en" ? "Practitioner" : "Praticien·ne";
+  return String(block.title || "").replace(/\[.*?\]/g, role || fallback);
 }
 
 /* ----------------------------------------------------------------------- */
@@ -143,7 +153,7 @@ function renderBlockCard(block, state, options = {}) {
   if (clickable) {
     wrap.setAttribute("role", "button");
     wrap.setAttribute("tabindex", "0");
-    wrap.setAttribute("aria-label", `Modifier le bloc ${block.title}`);
+    wrap.setAttribute("aria-label", tr(state, "ariaEditBlock", { title: block.title }));
   }
 
   const pattern = patternForBlock(block);
@@ -187,8 +197,8 @@ function renderBlockCard(block, state, options = {}) {
     const btn = document.createElement("button");
     btn.className = "btn btn--icon btn--ghost bento-block__remove no-print";
     btn.type = "button";
-    btn.title = "Retirer ce bloc";
-    btn.setAttribute("aria-label", `Retirer le bloc ${block.title}`);
+    btn.title = tr(state, "titleRemoveBlock");
+    btn.setAttribute("aria-label", tr(state, "ariaRemoveBlock", { title: block.title }));
     btn.innerHTML = icon("trash");
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -210,7 +220,7 @@ function renderBodyView(block, state) {
         const ans = state.answers[q.id];
         const p = document.createElement("p");
         p.className = "bento-block__answer" + (ans ? "" : " is-empty");
-        p.textContent = ans || "Pas encore de réponse.";
+        p.textContent = ans || tr(state, "noAnswerYet");
         container.appendChild(p);
       });
       break;
@@ -222,14 +232,14 @@ function renderBodyView(block, state) {
       p.className = "bento-block__answer" + (ans ? "" : " is-empty");
       p.style.fontSize = "clamp(1.1rem, 2.4vw, 1.6rem)";
       p.style.fontWeight = "700";
-      p.textContent = ans || block.placeholder || "Pas encore de phrase-clé.";
+      p.textContent = ans || block.placeholder || tr(state, "noTaglineYet");
       container.appendChild(p);
       break;
     }
     case "list": {
       const ul = document.createElement("ul");
       if (!data.items || !data.items.length) {
-        container.innerHTML = `<p class="bento-block__answer is-empty">Aucun élément.</p>`;
+        container.innerHTML = `<p class="bento-block__answer is-empty">${tr(state, "noItems")}</p>`;
         break;
       }
       data.items.forEach((item) => {
@@ -244,7 +254,7 @@ function renderBodyView(block, state) {
       const div = document.createElement("div");
       div.className = "tags-view";
       if (!data.items || !data.items.length) {
-        container.innerHTML = `<p class="bento-block__answer is-empty">Aucun enjeu listé.</p>`;
+        container.innerHTML = `<p class="bento-block__answer is-empty">${tr(state, "noIssuesListed")}</p>`;
         break;
       }
       data.items.forEach((item) => {
@@ -274,7 +284,7 @@ function renderBodyView(block, state) {
         colDiv.innerHTML = `<h4>${escapeHtml(col.title)}</h4>` +
           (items.length
             ? `<ul>${items.map((i) => `<li>${escapeHtml(i)}</li>`).join("")}</ul>`
-            : `<p class="bento-block__answer is-empty">À compléter.</p>`);
+            : `<p class="bento-block__answer is-empty">${tr(state, "toComplete")}</p>`);
         grid.appendChild(colDiv);
       });
       container.appendChild(grid);
@@ -295,13 +305,13 @@ function renderBodyView(block, state) {
           <div class="split-view__pct">${data.leftPercent}%</div>
           <div class="split-view__title">${escapeHtml(block.left.title)}</div>
           <div class="split-view__label">${escapeHtml(block.left.label)}</div>
-          ${leftItems.length ? `<ul>${leftItems.map((i) => `<li>${escapeHtml(i)}</li>`).join("")}</ul>` : `<p class="bento-block__answer is-empty">À compléter.</p>`}
+          ${leftItems.length ? `<ul>${leftItems.map((i) => `<li>${escapeHtml(i)}</li>`).join("")}</ul>` : `<p class="bento-block__answer is-empty">${tr(state, "toComplete")}</p>`}
         </div>
         <div class="split-view__col split-view__col--right">
           <div class="split-view__pct">${data.rightPercent}%</div>
           <div class="split-view__title">${escapeHtml(block.right.title)}</div>
           <div class="split-view__label">${escapeHtml(block.right.label)}</div>
-          ${rightItems.length ? `<ul>${rightItems.map((i) => `<li>${escapeHtml(i)}</li>`).join("")}</ul>` : `<p class="bento-block__answer is-empty">À compléter.</p>`}
+          ${rightItems.length ? `<ul>${rightItems.map((i) => `<li>${escapeHtml(i)}</li>`).join("")}</ul>` : `<p class="bento-block__answer is-empty">${tr(state, "toComplete")}</p>`}
         </div>
       `;
       container.appendChild(div);
@@ -330,7 +340,7 @@ function renderBodyView(block, state) {
       const grid = document.createElement("div");
       grid.className = "tools-grid";
       if (!data.items || !data.items.length) {
-        container.innerHTML = `<p class="bento-block__answer is-empty">Aucun outil listé.</p>`;
+        container.innerHTML = `<p class="bento-block__answer is-empty">${tr(state, "noToolsListed")}</p>`;
         break;
       }
       data.items.forEach((item) => {
@@ -372,6 +382,7 @@ function requestSuggestion(block, state, q, format, extra) {
           programName: meta.programName || "",
           role: meta.role || "",
           format: format || "qa",
+          lang: meta.lang || "fr",
         },
         extra || {}
       )
@@ -385,15 +396,15 @@ function requestSuggestion(block, state, q, format, extra) {
   });
 }
 
-function createSuggestButton() {
+function createSuggestButton(state) {
   const wrap = document.createElement("div");
   wrap.className = "qa-field__ai";
 
   const btn = document.createElement("button");
   btn.type = "button";
   btn.className = "btn btn--ghost btn--sm qa-field__ai-btn";
-  const idleLabel = `${icon("spark")}<span>Suggérer un brouillon</span>`;
-  const loadingLabel = `${icon("spark")}<span>Génération en cours…</span>`;
+  const idleLabel = `${icon("spark")}<span>${tr(state, "suggestDraft")}</span>`;
+  const loadingLabel = `${icon("spark")}<span>${tr(state, "suggestGenerating")}</span>`;
   btn.innerHTML = idleLabel;
 
   const status = document.createElement("span");
@@ -408,11 +419,11 @@ function createSuggestButton() {
 }
 
 function buildSuggestTools(ta, q, block, state, format) {
-  const { wrap, btn, status, idleLabel, loadingLabel } = createSuggestButton();
+  const { wrap, btn, status, idleLabel, loadingLabel } = createSuggestButton(state);
 
   btn.addEventListener("click", async () => {
     if (ta.value.trim()) {
-      const ok = confirm("Remplacer le texte actuel par une suggestion de l'IA ?");
+      const ok = confirm(tr(state, "confirmReplaceText"));
       if (!ok) return;
     }
 
@@ -428,8 +439,7 @@ function buildSuggestTools(ta, q, block, state, format) {
       ta.focus();
     } catch (err) {
       status.classList.add("qa-field__ai-status--error");
-      status.textContent =
-        "Suggestion indisponible pour le moment. Vous pouvez réessayer plus tard.";
+      status.textContent = tr(state, "suggestError");
     } finally {
       btn.disabled = false;
       btn.innerHTML = idleLabel;
@@ -444,11 +454,11 @@ function buildSuggestTools(ta, q, block, state, format) {
  * reçoit le texte de suggestion brut et applique le résultat aux données
  * du bloc, puis redessine au besoin. */
 function buildSuggestToolsGeneric({ block, state, q, format, extra, hasContent, onApply }) {
-  const { wrap, btn, status, idleLabel, loadingLabel } = createSuggestButton();
+  const { wrap, btn, status, idleLabel, loadingLabel } = createSuggestButton(state);
 
   btn.addEventListener("click", async () => {
     if (hasContent && hasContent()) {
-      const ok = confirm("Remplacer le contenu actuel par une suggestion de l'IA ?");
+      const ok = confirm(tr(state, "confirmReplaceContent"));
       if (!ok) return;
     }
 
@@ -462,8 +472,7 @@ function buildSuggestToolsGeneric({ block, state, q, format, extra, hasContent, 
       onApply(suggestion);
     } catch (err) {
       status.classList.add("qa-field__ai-status--error");
-      status.textContent =
-        "Suggestion indisponible pour le moment. Vous pouvez réessayer plus tard.";
+      status.textContent = tr(state, "suggestError");
     } finally {
       btn.disabled = false;
       btn.innerHTML = idleLabel;
@@ -505,14 +514,14 @@ function renderEditor(container, block, step, state, ctx) {
       const badgeField = document.createElement("div");
       badgeField.className = "qa-field qa-field--badge";
       badgeField.innerHTML = `
-        <label class="qa-field__label" for="field-badge-${block.id}">Étiquette du bloc (optionnel)</label>
-        <p class="qa-field__hint"><span class="qa-field__hint-icon" aria-hidden="true"><span class="icon-spark"></span></span><span>Ex. un acronyme ou un repère propre à votre programme — laissez vide pour ne rien afficher.</span></p>
+        <label class="qa-field__label" for="field-badge-${block.id}">${tr(state, "labelBlockBadge")}</label>
+        <p class="qa-field__hint"><span class="qa-field__hint-icon" aria-hidden="true"><span class="icon-spark"></span></span><span>${tr(state, "hintBlockBadge")}</span></p>
         <input type="text" id="field-badge-${block.id}" />
       `;
       const badgeInput = badgeField.querySelector("input");
-      badgeInput.setAttribute("aria-label", "Étiquette du bloc");
+      badgeInput.setAttribute("aria-label", tr(state, "ariaBlockBadge"));
       badgeInput.value = data.badge || "";
-      badgeInput.placeholder = "Ex. V.O.T.R.E. (ou laisser vide)";
+      badgeInput.placeholder = tr(state, "placeholderBlockBadge");
       badgeInput.addEventListener("input", () => {
         data.badge = badgeInput.value;
         ctx.onChange();
@@ -541,7 +550,7 @@ function renderEditor(container, block, step, state, ctx) {
       ta.id = `field-${q.id}`;
       ta.setAttribute("aria-label", q.label);
       ta.value = state.answers[q.id] || "";
-      ta.placeholder = "Écrivez votre réponse ici...";
+      ta.placeholder = tr(state, "placeholderAnswer");
       ta.addEventListener("input", () => {
         state.answers[q.id] = ta.value;
         ctx.onChange();
@@ -614,8 +623,8 @@ function renderEditor(container, block, step, state, ctx) {
       (data.items || []).forEach((item, idx) => {
         const chip = document.createElement("div");
         chip.className = "tags-editor__chip";
-        chip.innerHTML = `<input type="text" value="${escapeHtml(item)}" aria-label="Élément ${idx + 1}" />
-          <button type="button" aria-label="Retirer cet élément">${icon("trash")}</button>`;
+        chip.innerHTML = `<input type="text" value="${escapeHtml(item)}" aria-label="${tr(state, "ariaItem", { n: idx + 1 })}" />
+          <button type="button" aria-label="${tr(state, "ariaRemoveItem")}">${icon("trash")}</button>`;
         const input = chip.querySelector("input");
         input.addEventListener("input", () => {
           data.items[idx] = input.value;
@@ -631,7 +640,7 @@ function renderEditor(container, block, step, state, ctx) {
       const addBtn = document.createElement("button");
       addBtn.type = "button";
       addBtn.className = "btn btn--ghost btn--sm";
-      addBtn.innerHTML = `${icon("plus")} Ajouter`;
+      addBtn.innerHTML = `${icon("plus")} ${tr(state, "btnAdd")}`;
       addBtn.addEventListener("click", () => {
         data.items = data.items || [];
         data.items.push("");
@@ -672,14 +681,14 @@ function renderEditor(container, block, step, state, ctx) {
       <div class="split-editor__col split-editor__col--left">
         <div class="split-editor__pct" id="left-pct">${data.leftPercent}%</div>
         <div class="split-editor__label">${escapeHtml(block.left.title)} — ${escapeHtml(block.left.label)}</div>
-        <input type="range" class="split-slider" id="left-slider" min="0" max="100" step="5" value="${data.leftPercent}" aria-label="Pourcentage ${escapeHtml(block.left.title)}" />
-        <textarea id="left-items" aria-label="${escapeHtml(block.questions.find(q=>q.column==='left').label)}" placeholder="Une idée par ligne...">${escapeHtml(state.answers["partage-1"] || "")}</textarea>
+        <input type="range" class="split-slider" id="left-slider" min="0" max="100" step="5" value="${data.leftPercent}" aria-label="${tr(state, "ariaPercent", { title: escapeHtml(block.left.title) })}" />
+        <textarea id="left-items" aria-label="${escapeHtml(block.questions.find(q=>q.column==='left').label)}" placeholder="${tr(state, "placeholderOneIdeaPerLine")}">${escapeHtml(state.answers["partage-1"] || "")}</textarea>
       </div>
       <div class="split-editor__col split-editor__col--right">
         <div class="split-editor__pct" id="right-pct">${data.rightPercent}%</div>
         <div class="split-editor__label">${escapeHtml(block.right.title)} — ${escapeHtml(block.right.label)}</div>
-        <input type="range" class="split-slider" id="right-slider" min="0" max="100" step="5" value="${data.rightPercent}" aria-label="Pourcentage ${escapeHtml(block.right.title)}" />
-        <textarea id="right-items" aria-label="${escapeHtml(block.questions.find(q=>q.column==='right').label)}" placeholder="Une idée par ligne...">${escapeHtml(state.answers["partage-2"] || "")}</textarea>
+        <input type="range" class="split-slider" id="right-slider" min="0" max="100" step="5" value="${data.rightPercent}" aria-label="${tr(state, "ariaPercent", { title: escapeHtml(block.right.title) })}" />
+        <textarea id="right-items" aria-label="${escapeHtml(block.questions.find(q=>q.column==='right').label)}" placeholder="${tr(state, "placeholderOneIdeaPerLine")}">${escapeHtml(state.answers["partage-2"] || "")}</textarea>
       </div>
     `;
     container.appendChild(wrap);
@@ -746,7 +755,7 @@ function renderEditor(container, block, step, state, ctx) {
       r.className = "table-editor__row";
       const cell = data.cells[row.id];
       r.innerHTML = `
-        <div class="table-editor__row-label"><input type="text" value="${escapeHtml(row.label)}" aria-label="Nom de l'étape" /></div>
+        <div class="table-editor__row-label"><input type="text" value="${escapeHtml(row.label)}" aria-label="${tr(state, "ariaStepName")}" /></div>
         <textarea aria-label="${escapeHtml(block.columns[0].title)} — ${escapeHtml(row.label)}" placeholder="${escapeHtml(block.columns[0].hint || "")}">${escapeHtml(cell.humain)}</textarea>
         <textarea aria-label="${escapeHtml(block.columns[1].title)} — ${escapeHtml(row.label)}" placeholder="${escapeHtml(block.columns[1].hint || "")}">${escapeHtml(cell.ia)}</textarea>
       `;
@@ -835,9 +844,9 @@ function renderEditor(container, block, step, state, ctx) {
         row.className = "tools-editor__row";
         row.innerHTML = `
           <div class="tools-editor__icon">${getToolIcon(item.name)}</div>
-          <input type="text" value="${escapeHtml(item.name)}" placeholder="Nom de l'outil (ex. Claude)" aria-label="Nom de l'outil ${idx + 1}" />
-          <input type="text" value="${escapeHtml(item.usage)}" placeholder="Usage (ex. Recherche)" aria-label="Usage de l'outil ${idx + 1}" />
-          <button type="button" class="btn btn--icon btn--ghost btn--sm" aria-label="Retirer cet outil">${icon("trash")}</button>
+          <input type="text" value="${escapeHtml(item.name)}" placeholder="${tr(state, "placeholderToolName")}" aria-label="${tr(state, "ariaToolName", { n: idx + 1 })}" />
+          <input type="text" value="${escapeHtml(item.usage)}" placeholder="${tr(state, "placeholderToolUsage")}" aria-label="${tr(state, "ariaToolUsage", { n: idx + 1 })}" />
+          <button type="button" class="btn btn--icon btn--ghost btn--sm" aria-label="${tr(state, "ariaRemoveTool")}">${icon("trash")}</button>
         `;
         const [iconDiv, nameInput, usageInput, delBtn] = row.children;
         nameInput.addEventListener("input", () => {
@@ -859,7 +868,7 @@ function renderEditor(container, block, step, state, ctx) {
       const addBtn = document.createElement("button");
       addBtn.type = "button";
       addBtn.className = "btn btn--ghost btn--sm";
-      addBtn.innerHTML = `${icon("plus")} Ajouter un outil`;
+      addBtn.innerHTML = `${icon("plus")} ${tr(state, "btnAddTool")}`;
       addBtn.addEventListener("click", () => {
         data.items = data.items || [];
         data.items.push({ name: "", usage: "" });
@@ -908,7 +917,7 @@ function renderEditor(container, block, step, state, ctx) {
       colDiv.innerHTML = `
         <h4>${escapeHtml(col.title)}</h4>
         <p>${escapeHtml(col.hint || "")}</p>
-        <textarea aria-label="${escapeHtml(col.title)}" placeholder="Un élément par ligne...">${escapeHtml(data.columns[col.id] || "")}</textarea>
+        <textarea aria-label="${escapeHtml(col.title)}" placeholder="${tr(state, "placeholderOneItemPerLine")}">${escapeHtml(data.columns[col.id] || "")}</textarea>
       `;
       const colTa = colDiv.querySelector("textarea");
       colTa.addEventListener("input", (e) => {
