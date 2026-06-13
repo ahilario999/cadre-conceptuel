@@ -357,7 +357,35 @@ function renderBodyView(block, state) {
 /* serverless /api/suggest (proxy Groq) et propose un texte de départ que   */
 /* la personne peut ensuite modifier librement.                             */
 /* ----------------------------------------------------------------------- */
-function buildSuggestTools(ta, q, block, state, format) {
+function requestSuggestion(block, state, q, format, extra) {
+  const meta = (state && state.meta) || {};
+  return fetch("/api/suggest", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(
+      Object.assign(
+        {
+          question: q.label || "",
+          hint: q.hint || "",
+          blockTitle: block.title || "",
+          blockDescription: block.description || "",
+          programName: meta.programName || "",
+          role: meta.role || "",
+          format: format || "qa",
+        },
+        extra || {}
+      )
+    ),
+  }).then(async (response) => {
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || !data.suggestion) {
+      throw new Error(data.error || "Suggestion indisponible.");
+    }
+    return data.suggestion;
+  });
+}
+
+function createSuggestButton() {
   const wrap = document.createElement("div");
   wrap.className = "qa-field__ai";
 
@@ -373,6 +401,15 @@ function buildSuggestTools(ta, q, block, state, format) {
   status.setAttribute("role", "status");
   status.setAttribute("aria-live", "polite");
 
+  wrap.appendChild(btn);
+  wrap.appendChild(status);
+
+  return { wrap, btn, status, idleLabel, loadingLabel };
+}
+
+function buildSuggestTools(ta, q, block, state, format) {
+  const { wrap, btn, status, idleLabel, loadingLabel } = createSuggestButton();
+
   btn.addEventListener("click", async () => {
     if (ta.value.trim()) {
       const ok = confirm("Remplacer le texte actuel par une suggestion de l'IA ?");
@@ -385,27 +422,8 @@ function buildSuggestTools(ta, q, block, state, format) {
     status.classList.remove("qa-field__ai-status--error");
 
     try {
-      const meta = (state && state.meta) || {};
-      const response = await fetch("/api/suggest", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          question: q.label || "",
-          hint: q.hint || "",
-          blockTitle: block.title || "",
-          blockDescription: block.description || "",
-          programName: meta.programName || "",
-          role: meta.role || "",
-          format: format === "liste" ? "liste" : "qa",
-        }),
-      });
-
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok || !data.suggestion) {
-        throw new Error(data.error || "Suggestion indisponible.");
-      }
-
-      ta.value = data.suggestion;
+      const suggestion = await requestSuggestion(block, state, q, format === "liste" ? "liste" : "qa");
+      ta.value = suggestion;
       ta.dispatchEvent(new Event("input", { bubbles: true }));
       ta.focus();
     } catch (err) {
@@ -418,8 +436,40 @@ function buildSuggestTools(ta, q, block, state, format) {
     }
   });
 
-  wrap.appendChild(btn);
-  wrap.appendChild(status);
+  return wrap;
+}
+
+/* Variante générique : pour les champs qui ne sont pas de simples
+ * <textarea> (phrase-clé, listes à puces, tableau, outils). `onApply`
+ * reçoit le texte de suggestion brut et applique le résultat aux données
+ * du bloc, puis redessine au besoin. */
+function buildSuggestToolsGeneric({ block, state, q, format, extra, hasContent, onApply }) {
+  const { wrap, btn, status, idleLabel, loadingLabel } = createSuggestButton();
+
+  btn.addEventListener("click", async () => {
+    if (hasContent && hasContent()) {
+      const ok = confirm("Remplacer le contenu actuel par une suggestion de l'IA ?");
+      if (!ok) return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = loadingLabel;
+    status.textContent = "";
+    status.classList.remove("qa-field__ai-status--error");
+
+    try {
+      const suggestion = await requestSuggestion(block, state, q, format, extra);
+      onApply(suggestion);
+    } catch (err) {
+      status.classList.add("qa-field__ai-status--error");
+      status.textContent =
+        "Suggestion indisponible pour le moment. Vous pouvez réessayer plus tard.";
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = idleLabel;
+    }
+  });
+
   return wrap;
 }
 
@@ -508,6 +558,14 @@ function renderEditor(container, block, step, state, ctx) {
 
   if (step.type === "tagline") {
     const q = block.questions[0];
+
+    if (q.hint) {
+      const hint = document.createElement("p");
+      hint.className = "qa-field__hint";
+      hint.innerHTML = `<span class="qa-field__hint-icon" aria-hidden="true"><span class="icon-spark"></span></span><span>${escapeHtml(q.hint)}</span>`;
+      container.appendChild(hint);
+    }
+
     const wrap = document.createElement("div");
     wrap.className = "tagline-editor";
     wrap.innerHTML = `<input type="text" id="field-${q.id}" placeholder="${escapeHtml(block.placeholder || "")}" />`;
@@ -518,10 +576,35 @@ function renderEditor(container, block, step, state, ctx) {
       state.answers[q.id] = input.value;
       ctx.onChange();
     });
+
+    container.appendChild(
+      buildSuggestToolsGeneric({
+        block,
+        state,
+        q,
+        format: "phrase",
+        hasContent: () => input.value.trim().length > 0,
+        onApply: (suggestion) => {
+          input.value = suggestion.trim();
+          state.answers[q.id] = input.value;
+          ctx.onChange();
+          input.focus();
+        },
+      })
+    );
     return;
   }
 
   if (step.type === "list" || step.type === "list-tags") {
+    const q = (block.questions || [])[0] || { label: block.title, hint: "" };
+
+    if (q.hint) {
+      const hint = document.createElement("p");
+      hint.className = "qa-field__hint";
+      hint.innerHTML = `<span class="qa-field__hint-icon" aria-hidden="true"><span class="icon-spark"></span></span><span>${escapeHtml(q.hint)}</span>`;
+      container.appendChild(hint);
+    }
+
     const wrap = document.createElement("div");
     wrap.className = step.type === "list-tags" ? "tags-editor" : "tags-editor";
     container.appendChild(wrap);
@@ -560,6 +643,25 @@ function renderEditor(container, block, step, state, ctx) {
       wrap.appendChild(addBtn);
     }
     redraw();
+
+    container.appendChild(
+      buildSuggestToolsGeneric({
+        block,
+        state,
+        q,
+        format: "liste",
+        hasContent: () => (data.items || []).some((i) => i && String(i).trim()),
+        onApply: (suggestion) => {
+          const lines = String(suggestion || "")
+            .split("\n")
+            .map((s) => s.trim())
+            .filter(Boolean);
+          data.items = lines;
+          ctx.onChange();
+          redraw();
+        },
+      })
+    );
     return;
   }
 
@@ -664,10 +766,64 @@ function renderEditor(container, block, step, state, ctx) {
       wrap.appendChild(r);
     });
     container.appendChild(wrap);
+
+    const tableQ = { label: block.title || "Qui fait quoi ?", hint: block.rowHint || "" };
+    container.appendChild(
+      buildSuggestToolsGeneric({
+        block,
+        state,
+        q: tableQ,
+        format: "table",
+        extra: {
+          rows: data.rows.map((r) => r.label),
+          columns: [block.columns[0].title, block.columns[1].title],
+        },
+        hasContent: () =>
+          data.rows.some((r) => {
+            const cell = data.cells[r.id];
+            return cell && (cell.humain || cell.ia);
+          }),
+        onApply: (suggestion) => {
+          const lines = String(suggestion || "")
+            .split("\n")
+            .map((s) => s.trim())
+            .filter(Boolean);
+          const parsed = lines.map((line) => {
+            const m = line.match(/^(.*?)[:|：]\s*(.*)$/);
+            const label = m ? m[1].trim() : "";
+            const rest = m ? m[2].trim() : line;
+            const parts = rest.split("|").map((s) => s.trim());
+            return { label, humain: parts[0] || "", ia: parts[1] || "" };
+          });
+          data.rows.forEach((row, idx) => {
+            let match = parsed.find(
+              (p) => p.label && row.label && p.label.toLowerCase().includes(row.label.toLowerCase())
+            );
+            if (!match) match = parsed[idx];
+            if (match) {
+              const cell = data.cells[row.id];
+              if (match.humain) cell.humain = match.humain;
+              if (match.ia) cell.ia = match.ia;
+            }
+          });
+          ctx.onChange();
+          renderEditor(container, block, step, state, ctx);
+        },
+      })
+    );
     return;
   }
 
   if (step.type === "tools") {
+    const q = (block.questions || [])[0] || { label: block.title, hint: "" };
+
+    if (q.hint) {
+      const hint = document.createElement("p");
+      hint.className = "qa-field__hint";
+      hint.innerHTML = `<span class="qa-field__hint-icon" aria-hidden="true"><span class="icon-spark"></span></span><span>${escapeHtml(q.hint)}</span>`;
+      container.appendChild(hint);
+    }
+
     const wrap = document.createElement("div");
     wrap.className = "tools-editor";
     container.appendChild(wrap);
@@ -715,6 +871,31 @@ function renderEditor(container, block, step, state, ctx) {
       wrap.appendChild(addBtn);
     }
     redraw();
+
+    container.appendChild(
+      buildSuggestToolsGeneric({
+        block,
+        state,
+        q,
+        format: "outils",
+        hasContent: () => (data.items || []).some((i) => i && (i.name || i.usage)),
+        onApply: (suggestion) => {
+          const items = String(suggestion || "")
+            .split("\n")
+            .map((s) => s.trim())
+            .filter(Boolean)
+            .map((line) => {
+              const m = line.match(/^(.*?)\s*[—–:-]\s*(.*)$/);
+              if (m) return { name: m[1].trim(), usage: m[2].trim() };
+              return { name: line, usage: "" };
+            })
+            .filter((item) => item.name);
+          data.items = items;
+          ctx.onChange();
+          redraw();
+        },
+      })
+    );
     return;
   }
 
