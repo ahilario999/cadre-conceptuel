@@ -49,7 +49,7 @@ module.exports = async function handler(req, res) {
   const blockDescription = String(body.blockDescription || "").trim();
   const programName = String(body.programName || "").trim();
   const role = String(body.role || "").trim();
-  const allowedFormats = ["qa", "liste", "phrase", "outils", "table"];
+  const allowedFormats = ["qa", "liste", "liste-outils", "phrase", "outils", "table"];
   const format = allowedFormats.includes(String(body.format || "").trim())
     ? String(body.format).trim()
     : "qa";
@@ -60,6 +60,7 @@ module.exports = async function handler(req, res) {
   const isEn = lang === "en";
   const rows = Array.isArray(body.rows) ? body.rows.map((r) => String(r || "").trim()).filter(Boolean) : [];
   const columns = Array.isArray(body.columns) ? body.columns.map((c) => String(c || "").trim()).filter(Boolean) : [];
+  const contextSummary = String(body.contextSummary || "").trim().slice(0, 600);
 
   if (!question) {
     res.status(400).json({ error: isEn ? "The question is missing." : "La question est manquante." });
@@ -74,6 +75,9 @@ module.exports = async function handler(req, res) {
           role ? `Role of the person answering: ${role}` : null,
           programName ? `Program or teaching field: ${programName}` : null,
           hint ? `Reflection prompt provided: ${hint}` : null,
+          contextSummary
+            ? `Excerpts already written elsewhere in this person's framework (use this to target their specific field of expertise):\n${contextSummary}`
+            : null,
         ]
       : [
           blockTitle ? `Section du cadre conceptuel : ${blockTitle}` : null,
@@ -81,6 +85,9 @@ module.exports = async function handler(req, res) {
           role ? `Rôle de la personne qui répond : ${role}` : null,
           programName ? `Programme ou domaine d'enseignement : ${programName}` : null,
           hint ? `Piste de réflexion fournie : ${hint}` : null,
+          contextSummary
+            ? `Extraits déjà rédigés ailleurs dans le cadre de cette personne (à utiliser pour cibler son domaine d'expertise précis) :\n${contextSummary}`
+            : null,
         ]
   )
     .filter(Boolean)
@@ -143,20 +150,42 @@ module.exports = async function handler(req, res) {
       systemPrompt = [
         baseIntro,
         "You are given a section that requires a list of digital or AI tools relevant to the person's teaching field, each with its main use.",
-        "Propose 3 to 5 concrete tools relevant to this field, each with its main use in 1 to 2 words.",
+        "Propose 3 to 5 REAL, EXISTING, well-known software or tool names (e.g. ChatGPT, Claude, Midjourney, Adobe Firefly, Figma, Canva) appropriate for this specific field — never invented, generic, or placeholder names — each with its main use in 1 to 2 words.",
         "Respond with one line per tool, in the exact format \"Tool name — usage\" (with an em dash — between the name and the usage): no bullets, no numbering, no preamble.",
       ].join(" ");
-      userPrompt = `${contextLines ? contextLines + "\n\n" : ""}Question: ${question}\n\nPropose 3 to 5 relevant tools with their usage, one per line, in the format "Name — usage".`;
+      userPrompt = `${contextLines ? contextLines + "\n\n" : ""}Question: ${question}\n\nPropose 3 to 5 real, existing tools relevant to this field, with their usage, one per line, in the format "Name — usage".`;
     } else {
       systemPrompt = [
         baseIntro,
         "On te donne une section qui demande une liste d'outils numériques ou d'IA pertinents pour le domaine d'enseignement de la personne, chacun avec son usage principal.",
-        "Propose 3 à 5 outils concrets et pertinents pour ce domaine, chacun avec son usage principal en 1 à 2 mots.",
+        "Propose 3 à 5 noms d'outils ou de logiciels RÉELS, EXISTANTS et reconnus (ex. ChatGPT, Claude, Midjourney, Adobe Firefly, Figma, Canva) adaptés à ce domaine précis — jamais de noms inventés, génériques ou de type « espace réservé » — chacun avec son usage principal en 1 à 2 mots.",
         "Réponds avec une ligne par outil, au format exact « Nom de l'outil — usage » (avec un tiret cadratin — entre le nom et l'usage) : aucune puce, aucun numéro, aucun préambule.",
       ].join(" ");
-      userPrompt = `${contextLines ? contextLines + "\n\n" : ""}Question : ${question}\n\nPropose 3 à 5 outils pertinents avec leur usage, un par ligne, au format « Nom — usage ».`;
+      userPrompt = `${contextLines ? contextLines + "\n\n" : ""}Question : ${question}\n\nPropose 3 à 5 outils réels et existants, pertinents pour ce domaine, avec leur usage, un par ligne, au format « Nom — usage ».`;
     }
     maxTokens = 120;
+  } else if (format === "liste-outils") {
+    // Colonnes de la « Boîte à outils » (Traditionnel / Numérique / Collaboratif /
+    // Génératif) : on attend des NOMS RÉELS de logiciels ou d'outils, pas des
+    // descriptions génériques de catégories.
+    if (isEn) {
+      systemPrompt = [
+        baseIntro,
+        "You are given one category of a tool-evolution diagram (e.g. traditional, digital, collaborative, generative AI) for the person's field.",
+        "Propose 3 to 5 REAL, EXISTING, well-known software or tool names that belong to this category and are genuinely used (or relevant) in this field — for a generative AI category, this typically means names like ChatGPT, Claude, Midjourney, DALL-E, Adobe Firefly, Runway, etc., adapted to the field. Never invent names, never describe a category instead of naming a tool.",
+        "Respond only with the tool names, one per line, 1 to 3 words each: no bullets, no numbering, no usage description, no preamble.",
+      ].join(" ");
+      userPrompt = `${contextLines ? contextLines + "\n\n" : ""}Category: ${question}${hint ? "\nCategory description: " + hint : ""}\n\nPropose 3 to 5 real, existing tool or software names for this category, one per line.`;
+    } else {
+      systemPrompt = [
+        baseIntro,
+        "On te donne une catégorie d'un diagramme d'évolution des outils (ex. traditionnel, numérique, collaboratif, IA générative) pour le domaine de la personne.",
+        "Propose 3 à 5 noms d'outils ou de logiciels RÉELS, EXISTANTS et reconnus qui appartiennent à cette catégorie et sont réellement utilisés (ou pertinents) dans ce domaine — pour une catégorie « génératif », cela signifie typiquement des noms comme ChatGPT, Claude, Midjourney, DALL-E, Adobe Firefly, Runway, etc., adaptés au domaine. N'invente jamais de noms et ne décris jamais une catégorie au lieu de nommer un outil.",
+        "Réponds uniquement avec les noms d'outils, un par ligne, 1 à 3 mots chacun : aucune puce, aucun numéro, aucune description d'usage, aucun préambule.",
+      ].join(" ");
+      userPrompt = `${contextLines ? contextLines + "\n\n" : ""}Catégorie : ${question}${hint ? "\nDescription de la catégorie : " + hint : ""}\n\nPropose 3 à 5 noms d'outils ou de logiciels réels et existants pour cette catégorie, un par ligne.`;
+    }
+    maxTokens = 80;
   } else if (format === "table") {
     // Bloc « Qui fait quoi ? » : pour chaque étape, une courte description du
     // rôle de la personne et de celui de l'IA.
@@ -190,21 +219,21 @@ module.exports = async function handler(req, res) {
     if (isEn) {
       systemPrompt = [
         baseIntro,
-        "You are given a reflection question. Propose a short draft answer (2 to 3 sentences maximum), in clear English, written in the first person, as a starting point the person can then edit and personalize.",
-        "Reflective, concrete, and nuanced tone.",
+        "You are given a reflection question. Propose a very short draft answer: 1 sentence, 2 maximum, no more than about 30 words in total, in clear English, written in the first person, as a starting point the person can then edit and personalize.",
+        "Reflective, concrete, and specific tone — go straight to the point, do not introduce or restate the question.",
         "Respond only with the draft text: no title, no bullet list, no quotation marks, no preamble.",
       ].join(" ");
-      userPrompt = `${contextLines ? contextLines + "\n\n" : ""}Question: ${question}\n\nPropose a draft answer (2 to 3 sentences maximum).`;
+      userPrompt = `${contextLines ? contextLines + "\n\n" : ""}Question: ${question}\n\nPropose a very short draft answer (1 sentence, 2 maximum, about 30 words max).`;
     } else {
       systemPrompt = [
         baseIntro,
-        "On te donne une question de réflexion. Propose un court brouillon de réponse (2 à 3 phrases maximum), en français canadien, vouvoiement, écrit à la première personne, comme point de départ que la personne pourra ensuite modifier et personnaliser.",
-        "Ton réflexif, concret et nuancé.",
+        "On te donne une question de réflexion. Propose un très court brouillon de réponse : 1 phrase, 2 maximum, environ 30 mots au total, en français canadien, vouvoiement, écrit à la première personne, comme point de départ que la personne pourra ensuite modifier et personnaliser.",
+        "Ton réflexif, concret et précis — va droit au but, sans reformuler la question ni faire d'introduction.",
         "Réponds uniquement avec le texte du brouillon : aucun titre, aucune liste à puces, aucun guillemet, aucun préambule.",
       ].join(" ");
-      userPrompt = `${contextLines ? contextLines + "\n\n" : ""}Question : ${question}\n\nPropose un brouillon de réponse (2 à 3 phrases maximum).`;
+      userPrompt = `${contextLines ? contextLines + "\n\n" : ""}Question : ${question}\n\nPropose un très court brouillon de réponse (1 phrase, 2 maximum, environ 30 mots max).`;
     }
-    maxTokens = 160;
+    maxTokens = 90;
   }
 
   try {
