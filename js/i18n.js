@@ -405,6 +405,7 @@ const BLOCK_LIBRARY_EN = {
     title: "Intention",
     subtitle: "Directed co-ideation",
     tag: "WHILE you use AI",
+    acronymDescription: "Action • Context • Tone • Identity • Format",
     description: "How to phrase a request to AI so it remains a tool serving your intention.",
     questions: [
       {
