@@ -822,6 +822,7 @@ html[data-theme="dark"] .btn--outline { color: var(--white); }
   left: -45%;
   top: 8%;
   margin: 0;
+  transform: translate(-100px, 100px);
 }
 
 /* Barre d'actions (Accueil / Continuer) : le bouton "Continuer" se place
