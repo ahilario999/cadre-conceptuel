@@ -35,7 +35,7 @@ const DEFAULT_META = {
   authorName: "",
   role: "Praticien·ne",
   logoDataUrl: null,
-  accentColor: ACCENT_PRESETS[0].value,
+  accentColor: "#6F5194",
   theme: "light", // "light" | "dark"
   createdAt: null,
   updatedAt: null,

@@ -31,10 +31,27 @@ const UI_STRINGS = {
     langToggleFr: "FRA",
     langToggleEn: "ENG",
 
-    // Écran 1 — Configuration
+    // Écran Accueil
+    homeTitleStrong: "Agir autrement",
+    homeTitleLight: "la pratique avec l'IA",
+    homeLead:
+      "L'IA transforme les métiers, mais elle ne remplace pas le jugement professionnel. Cette application vous guide à formuler votre posture : ce que vous déléguez, ce que vous décidez, ce que vous protégez et ce que vous créez.",
+    btnHomeStart: "Commencer",
+    btnHomeImport: "Importer un fichier",
+
+    // Écrans Étape 1 / Étape 2 — Configuration
     configTitle: "Construisez votre Cadre conceptuel",
     configLead:
       "Inspiré du cadre « Le graphiste dans la boucle », cet outil vous coache pour bâtir le vôtre : répondez à une courte entrevue par bloc, avec des pistes de réflexion pour chaque thème — la décision finale vous appartient toujours.",
+    stepsLead:
+      "Inspiré du cadre « Le graphiste dans la boucle », cet outil vous coache pour bâtir le vôtre : répondez à une courte entrevue par bloc, avec des pistes de réflexion pour chaque thème — la décision finale vous appartient toujours.",
+    stepIndicator1: "Étape 1 sur 2",
+    identityTitle: "Définissez votre cadre conceptuel",
+    btnBackHome: "Accueil",
+    btnContinue: "Continuer →",
+    stepIndicator2: "Étape 2 sur 2",
+    blocksTitle: "Personnalisez votre cadre conceptuel",
+    btnBack: "Précédent",
     section1Identity: "1 — Identité",
     labelProgramName: "Nom du programme",
     placeholderProgramName: "Ex. Design graphique",
@@ -207,10 +224,27 @@ const UI_STRINGS = {
     langToggleFr: "FRA",
     langToggleEn: "ENG",
 
-    // Screen 1 — Configuration
+    // Home screen
+    homeTitleStrong: "Working differently",
+    homeTitleLight: "practice with AI",
+    homeLead:
+      "AI is transforming professions, but it doesn't replace professional judgment. This tool guides you to articulate your stance: what you delegate, what you decide, what you protect, and what you create.",
+    btnHomeStart: "Get started",
+    btnHomeImport: "Import a file",
+
+    // Step 1 / Step 2 screens — Configuration
     configTitle: "Build your Conceptual Framework",
     configLead:
       "Inspired by the “The Graphic Designer in the Loop” framework, this tool coaches you to build your own: answer a short interview block by block, with reflection prompts for each theme — the final decision is always yours.",
+    stepsLead:
+      "Inspired by the “The Graphic Designer in the Loop” framework, this tool coaches you to build your own: answer a short interview block by block, with reflection prompts for each theme — the final decision is always yours.",
+    stepIndicator1: "Step 1 of 2",
+    identityTitle: "Define your conceptual framework",
+    btnBackHome: "Home",
+    btnContinue: "Continue →",
+    stepIndicator2: "Step 2 of 2",
+    blocksTitle: "Customize your conceptual framework",
+    btnBack: "Previous",
     section1Identity: "1 — Identity",
     labelProgramName: "Program name",
     placeholderProgramName: "E.g. Graphic Design",
