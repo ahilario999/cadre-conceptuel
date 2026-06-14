@@ -728,7 +728,6 @@ html[data-theme="dark"] .btn--outline { color: var(--white); }
 .config-card h3 { font-size: 1.1rem; }
 
 /* Fond doux partagé par tous les écrans du parcours (Accueil → Cadre final) */
-#screen-home,
 #screen-identity,
 #screen-blocks,
 #screen-interview,
@@ -740,6 +739,22 @@ html[data-theme="dark"] .btn--outline { color: var(--white); }
   background-position: center;
   background-repeat: no-repeat;
   border-radius: var(--radius-lg);
+}
+
+/* L'écran Accueil reprend le même fond, mais plein écran (pas de carte,
+   pas de marge) pour reproduire le hero "edge-to-edge" du Figma. */
+#screen-home {
+  background-color: var(--hero-bg-b);
+  background-image: url("assets/Home-background-light.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 0;
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 }
 
 html[data-theme="dark"] #screen-home,
@@ -789,31 +804,36 @@ html[data-theme="dark"] #screen-final {
 /* ---------- Écran Accueil --------------------------------------------------- */
 .hero {
   display: grid;
-  grid-template-columns: 1.1fr 1fr;
+  grid-template-columns: 1.15fr 1fr;
   gap: var(--gap);
   align-items: center;
-  min-height: 64vh;
-  padding: var(--gap) 0;
+  min-height: 88vh;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: clamp(28px, 5vw, 64px) clamp(24px, 6.6vw, 96px);
 }
 .hero__content {
   display: flex;
   flex-direction: column;
-  gap: 22px;
-  max-width: 580px;
+  gap: 24px;
+  max-width: 620px;
 }
 .hero__title {
   display: flex;
   flex-direction: column;
-  font-size: clamp(2.4rem, 6vw, 5.5rem);
-  font-weight: 800;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
+  font-size: clamp(2.75rem, 6.7vw, 6rem);
+  font-weight: 700;
+  line-height: 0.94;
+  letter-spacing: -0.01em;
 }
+.hero__title-strong { font-weight: 700; }
 .hero__title-light { font-weight: 300; }
 .hero__lead {
-  color: var(--gray-600);
-  font-size: 1.05rem;
-  max-width: 52ch;
+  color: var(--black);
+  font-weight: 300;
+  font-size: 1.25rem;
+  line-height: 1.5;
+  max-width: 485px;
 }
 .hero__actions {
   display: flex;
@@ -821,13 +841,35 @@ html[data-theme="dark"] #screen-final {
   flex-wrap: wrap;
   margin-top: 6px;
 }
+.hero__actions .btn {
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 25px;
+  padding: 12.5px 24px;
+  min-width: 213px;
+  text-align: center;
+}
+.hero__actions .btn--outline {
+  border-color: #B2A1CF;
+}
+#btn-home-import {
+  min-width: 222px;
+}
 .hero__visual {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-end;
+  justify-content: flex-end;
+  height: 100%;
 }
-.hero__ribbon { width: 100%; max-width: 460px; height: auto; display: block; }
-.hero__ribbon--small { max-width: 320px; }
+.hero__ribbon {
+  width: 100%;
+  max-width: 620px;
+  height: auto;
+  display: block;
+  margin: -40px -40px -64px 0;
+}
+.hero__ribbon--small { max-width: 320px; margin: 0; }
 
 .logo-dropzone {
   border: 2px dashed var(--gray-400);
@@ -1393,8 +1435,10 @@ html[data-theme="dark"] #screen-final {
   .col-7, .col-8 { grid-column: span 12; }
   .config-grid { grid-template-columns: 1fr; }
   .columns-editor, .columns-view { grid-template-columns: repeat(2, 1fr); }
-  .hero { grid-template-columns: 1fr; min-height: auto; text-align: left; }
-  .hero__visual { order: -1; max-width: 320px; margin: 0 auto; }
+  .hero { grid-template-columns: 1fr; min-height: auto; text-align: left; padding: clamp(24px, 6vw, 40px) clamp(20px, 5vw, 32px); }
+  .hero__visual { order: -1; max-width: 320px; margin: 0 auto; justify-content: center; }
+  .hero__visual .hero__ribbon { max-width: 280px; margin: 0; }
+  .hero__actions .btn, #btn-home-import { min-width: 0; flex: 1 1 auto; }
   .step-layout { grid-template-columns: 1fr; }
   .step-layout__visual { display: none; }
 }
