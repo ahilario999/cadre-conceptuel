@@ -384,7 +384,7 @@ const ACCENT_NAMES_EN = {
 const BLOCK_LIBRARY_EN = {
   ethique: {
     title: "Ethics",
-    subtitle: "The moral brief",
+    subtitle: "Before acting",
     tag: "BEFORE acting",
     description: "The questions to ask yourself before even opening a generative AI tool.",
     questions: [
@@ -399,7 +399,7 @@ const BLOCK_LIBRARY_EN = {
   },
   intention: {
     title: "Intention",
-    subtitle: "AgentivitAugmented human agencyé humaine augmentée",
+    subtitle: "Frame the action",
     tag: "WHILE you use AI",
     acronymDescription: "Action • Context • Tone • Identity • Format",
     description: "How to phrase a request to AI so it remains a tool serving your intention.",
@@ -415,7 +415,7 @@ const BLOCK_LIBRARY_EN = {
   },
   conception: {
     title: "Practice",
-    subtitle: "How to act",
+    subtitle: "Take action",
     tag: "HOW you design",
     badge: "I.D.E.E. — Ideate • Develop • Evaluate • Execute",
     description: "Where AI fits into each step of your creative or problem-solving process.",
