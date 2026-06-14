@@ -1153,7 +1153,23 @@ html[data-theme="dark"] .btn--outline { color: var(--white); }
   background: rgba(255,255,255,0.08); color: inherit; padding: 10px; resize: vertical;
 }
 .split-editor__col--right textarea { background: rgba(0,0,0,0.08); border-color: rgba(0,0,0,0.18); }
+/* Texte d'exemple ("Une idée par ligne...") trop pâle sur fond accent/foncé : on
+   l'aligne sur la couleur du texte (blanc) avec une opacité lisible. */
+.split-editor__col textarea::placeholder { color: rgba(255, 255, 255, 0.75); }
 .split-slider { width: 100%; margin-top: 6px; accent-color: var(--accent); }
+
+/* Bouton « + Suggérer un brouillon » (.btn--ghost, texte var(--black) +
+   bordure var(--gray-200)) et son statut (var(--gray-600)) : illisibles sur
+   les fonds foncé/accent des colonnes du split-editor. On aligne sur la
+   couleur du texte de la colonne (blanc / accent-contrast). */
+.split-editor__col .qa-field__ai-btn {
+  color: inherit;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+.split-editor__col .qa-field__ai-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+.split-editor__col .qa-field__ai-status { color: inherit; opacity: 0.75; }
 
 /* tableau "Qui fait quoi" éditeur */
 .table-editor {
