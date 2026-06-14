@@ -771,8 +771,8 @@ html[data-theme="dark"] .btn--outline { color: var(--white); }
 
 /* Mise en page Étape 1 / Étape 2 : le panneau s'aligne sur le titre,
    le ruban est agrandi et placé en arrière-plan du panneau. */
-#screen-identity,
-#screen-blocks {
+#screen-identity.active,
+#screen-blocks.active {
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: auto auto auto;
