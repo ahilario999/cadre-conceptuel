@@ -25,8 +25,11 @@
   --gray-600: #6E6E76;
   --gray-800: #2B2B30;
 
-  --accent: #0E7C75;
+  --accent: #6F5194;
   --accent-contrast: #FFFFFF; /* recalculé par JS selon luminosité */
+
+  /* Couleur de secours sous l'image de fond (écrans Accueil / Étape 1 / Étape 2) */
+  --hero-bg-b: #FCF4EF;
 
   --font-display: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
   --font-body: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
@@ -63,6 +66,8 @@ html[data-theme="dark"] {
      basculer vers le blanc inversé (--black) ni un noir plein. */
   --block-dark-bg: #5C5C63;
   --block-dark-text: #FFFFFF;
+
+  --hero-bg-b: #15131A;
 }
 
 /* ---------- 2. Reset & base ---------------------------------------------- */
@@ -192,7 +197,18 @@ img { max-width: 100%; display: block; }
   gap: 8px;
   flex-wrap: wrap;
   justify-content: flex-end;
+  align-items: center;
 }
+
+.app-header__actions-config {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Sur l'écran Accueil, on masque les actions de configuration (thème,
+   sauvegarder, importer, recommencer) pour ne garder que l'essentiel. */
+.is-home .app-header__actions-config { display: none; }
 
 /* ---------- Toggle de langue (FRA / ENG) --------------------------------- */
 .lang-toggle {
@@ -512,6 +528,12 @@ html[data-theme="dark"] .bento-block.theme-accent-dark {
   color: var(--accent-contrast);
   border-color: var(--accent);
 }
+.btn--outline {
+  background: transparent;
+  color: var(--black);
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+}
+html[data-theme="dark"] .btn--outline { color: var(--white); }
 .btn--sm { padding: 7px 14px; font-size: 0.82rem; }
 .btn--icon { padding: 10px; border-radius: 50%; }
 .btn:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -690,20 +712,108 @@ html[data-theme="dark"] .btn--ghost { background: transparent; color: var(--whit
 .choice-card.is-selected .choice-card__check svg { opacity: 1; }
 
 /* ---------- 7. Écran configuration ----------------------------------------- */
-.config-grid {
-  display: grid;
-  gap: var(--gap);
-  grid-template-columns: 1fr 1fr;
+
+/* Fond doux partagé par tous les écrans du parcours (Accueil → Cadre final) */
+#screen-home,
+#screen-config-identity,
+#screen-config-blocks,
+#screen-interview,
+#screen-overview,
+#screen-final {
+  background-color: var(--hero-bg-b);
+  background-image: url("assets/Home-background-light.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: var(--radius-lg);
 }
-.config-card {
+
+html[data-theme="dark"] #screen-home,
+html[data-theme="dark"] #screen-config-identity,
+html[data-theme="dark"] #screen-config-blocks,
+html[data-theme="dark"] #screen-interview,
+html[data-theme="dark"] #screen-overview,
+html[data-theme="dark"] #screen-final {
+  background-image: url("assets/home-background-dark.png");
+}
+
+/* Indicateur "Étape X sur Y" */
+.step-indicator {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+/* Mise en page Étape 1 / Étape 2 : visuel décoratif + panneau de formulaire */
+.step-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap);
+  margin-top: var(--gap);
+  align-items: start;
+}
+.step-layout__visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 240px;
+}
+.step-panel {
   border: 1px solid var(--gray-200);
   border-radius: var(--radius-lg);
   padding: var(--pad);
+  background: var(--white);
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
-.config-card h3 { font-size: 1.1rem; }
+.step-panel h2 { font-size: 1.1rem; }
+
+/* ---------- Écran Accueil --------------------------------------------------- */
+.hero {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: var(--gap);
+  align-items: center;
+  min-height: 64vh;
+  padding: var(--gap) 0;
+}
+.hero__content {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  max-width: 580px;
+}
+.hero__title {
+  display: flex;
+  flex-direction: column;
+  font-size: clamp(2.4rem, 6vw, 5.5rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.hero__title-light { font-weight: 300; }
+.hero__lead {
+  color: var(--gray-600);
+  font-size: 1.05rem;
+  max-width: 52ch;
+}
+.hero__actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+.hero__visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hero__ribbon { width: 100%; max-width: 460px; height: auto; display: block; }
+.hero__ribbon--small { max-width: 320px; }
 
 .logo-dropzone {
   border: 2px dashed var(--gray-400);
@@ -1267,8 +1377,11 @@ html[data-theme="dark"] .btn--ghost { background: transparent; color: var(--whit
 @media (max-width: 1080px) {
   .col-3, .col-4, .col-5 { grid-column: span 6; }
   .col-7, .col-8 { grid-column: span 12; }
-  .config-grid { grid-template-columns: 1fr; }
   .columns-editor, .columns-view { grid-template-columns: repeat(2, 1fr); }
+  .hero { grid-template-columns: 1fr; min-height: auto; text-align: left; }
+  .hero__visual { order: -1; max-width: 320px; margin: 0 auto; }
+  .step-layout { grid-template-columns: 1fr; }
+  .step-layout__visual { display: none; }
 }
 
 @media (max-width: 768px) {

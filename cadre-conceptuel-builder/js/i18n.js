@@ -31,10 +31,19 @@ const UI_STRINGS = {
     langToggleFr: "FRA",
     langToggleEn: "ENG",
 
-    // Écran 1 — Configuration
-    configTitle: "Construisez votre Cadre conceptuel",
-    configLead:
+    // Écran d'accueil
+    homeTitleStrong: "Agir autrement",
+    homeTitleLight: "la pratique avec l'IA",
+    homeLead:
+      "L'IA transforme les métiers, mais elle ne remplace pas le jugement professionnel. Cette application vous guide à formuler votre posture : ce que vous déléguez, ce que vous décidez, ce que vous protégez et ce que vous créez.",
+    btnHomeStart: "Commencer",
+    btnHomeImport: "Importer un fichier",
+
+    // Étapes 1 et 2 — Configuration
+    stepsLead:
       "Inspiré du cadre « Le graphiste dans la boucle », cet outil vous coache pour bâtir le vôtre : répondez à une courte entrevue par bloc, avec des pistes de réflexion pour chaque thème — la décision finale vous appartient toujours.",
+    stepIndicator1: "Étape 1 sur 2",
+    identityTitle: "Définissez votre cadre conceptuel",
     section1Identity: "1 — Identité",
     labelProgramName: "Nom du programme",
     placeholderProgramName: "Ex. Design graphique",
@@ -56,16 +65,20 @@ const UI_STRINGS = {
     fieldLabelLogo: "Logo (programme ou établissement)",
     logoDropzoneHtml:
       "<strong>Cliquez pour téléverser</strong> ou glissez une image ici (PNG/SVG, fond transparent recommandé).",
-    section2Appearance: "2 — Apparence",
-    fieldLabelAccent: "Couleur d'accent",
+    fieldLabelAccent: "Apparence et couleur d'accent",
     ariaAccentPresets: "Couleurs d'accent prédéfinies",
     ariaAccentCustom: "Couleur d'accent personnalisée",
     labelCustomColor: "Personnalisée",
-    section3Blocks: "3 — Blocs du cadre",
+    btnBackHome: "Accueil",
+    btnContinue: "Continuer →",
+
+    stepIndicator2: "Étape 2 sur 2",
+    blocksTitle: "Personnalisez votre cadre conceptuel",
+    section3Blocks: "Blocs du cadre",
     hintBlocksConfig:
       "Activez, désactivez ou réordonnez les blocs selon votre champ d'expertise. Vous pourrez aussi en ajouter plus tard.",
     btnAddCustomBlock: "Ajouter un bloc personnalisé",
-    hintImportConfig: "Vous pouvez importer une sauvegarde existante avec le bouton « Importer » en haut.",
+    btnBack: "Précédent",
     btnStartInterview: "Commencer l'entrevue →",
 
     // Écran 2 — Entrevue
@@ -209,10 +222,19 @@ const UI_STRINGS = {
     langToggleFr: "FRA",
     langToggleEn: "ENG",
 
-    // Screen 1 — Configuration
-    configTitle: "Build your Conceptual Framework",
-    configLead:
+    // Home screen
+    homeTitleStrong: "Working differently",
+    homeTitleLight: "practice with AI",
+    homeLead:
+      "AI is transforming professions, but it doesn't replace professional judgment. This tool guides you to articulate your stance: what you delegate, what you decide, what you protect, and what you create.",
+    btnHomeStart: "Get started",
+    btnHomeImport: "Import a file",
+
+    // Steps 1 and 2 — Configuration
+    stepsLead:
       "Inspired by the “The Graphic Designer in the Loop” framework, this tool coaches you to build your own: answer a short interview block by block, with reflection prompts for each theme — the final decision is always yours.",
+    stepIndicator1: "Step 1 of 2",
+    identityTitle: "Define your conceptual framework",
     section1Identity: "1 — Identity",
     labelProgramName: "Program name",
     placeholderProgramName: "E.g. Graphic Design",
@@ -234,16 +256,20 @@ const UI_STRINGS = {
     fieldLabelLogo: "Logo (program or institution)",
     logoDropzoneHtml:
       "<strong>Click to upload</strong> or drag an image here (PNG/SVG, transparent background recommended).",
-    section2Appearance: "2 — Appearance",
-    fieldLabelAccent: "Accent color",
+    fieldLabelAccent: "Appearance and accent color",
     ariaAccentPresets: "Preset accent colors",
     ariaAccentCustom: "Custom accent color",
     labelCustomColor: "Custom",
-    section3Blocks: "3 — Framework blocks",
+    btnBackHome: "Home",
+    btnContinue: "Continue →",
+
+    stepIndicator2: "Step 2 of 2",
+    blocksTitle: "Customize your conceptual framework",
+    section3Blocks: "Framework blocks",
     hintBlocksConfig:
       "Enable, disable or reorder the blocks according to your field of expertise. You can also add more later.",
     btnAddCustomBlock: "Add a custom block",
-    hintImportConfig: "You can import an existing save file using the “Import” button above.",
+    btnBack: "Previous",
     btnStartInterview: "Start the interview →",
 
     // Screen 2 — Interview

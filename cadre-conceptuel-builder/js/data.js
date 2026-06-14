@@ -35,7 +35,7 @@ const DEFAULT_META = {
   authorName: "",
   role: "Praticien·ne",
   logoDataUrl: null,
-  accentColor: ACCENT_PRESETS[0].value,
+  accentColor: "#6F5194",
   theme: "light", // "light" | "dark"
   createdAt: null,
   updatedAt: null,
@@ -380,7 +380,7 @@ function createDefaultState() {
     answers: {}, // { [questionId]: string | string[] }
     blockData: {}, // données spécifiques par bloc (ex: % split, items de table, items d'outils)
     currentStep: 0, // index dans le parcours d'entrevue
-    screen: "config", // "config" | "interview" | "overview" | "final"
+    screen: "home", // "home" | "identity" | "blocks" | "interview" | "overview" | "final"
   };
 }
 

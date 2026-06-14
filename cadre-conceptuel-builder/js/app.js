@@ -60,7 +60,8 @@
     s.blockOrder = s.blockOrder || BLOCK_LIBRARY.map((b) => b.id);
     s.meta = Object.assign({}, window.CADRE_DATA.DEFAULT_META, s.meta || {});
     s.currentStep = s.currentStep || 0;
-    s.screen = s.screen || "config";
+    s.screen = s.screen || "home";
+    if (s.screen === "config") s.screen = "home";
     // S'assure que tous les blocs de la librairie figurent dans blockOrder
     BLOCK_LIBRARY.forEach((b) => {
       if (!s.blockOrder.includes(b.id)) s.blockOrder.push(b.id);
@@ -193,6 +194,7 @@
     const el = document.getElementById(`screen-${name}`);
     if (el) el.classList.add("active");
     state.screen = name;
+    document.getElementById("app").classList.toggle("is-home", name === "home");
     saveState();
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -256,7 +258,7 @@
     document.getElementById("input-cadre-title").value = state.meta.title || "";
     document.getElementById("input-cadre-tagline").value = state.meta.tagline || "";
     document.getElementById("input-cadre-quote").value = state.meta.quote || "";
-    document.getElementById("input-accent-custom").value = state.meta.accentColor || "#0E7C75";
+    document.getElementById("input-accent-custom").value = state.meta.accentColor || "#6F5194";
   }
 
   function bindMetaField(inputId, metaKey, onAfter) {
@@ -852,9 +854,9 @@
 
     steps = buildSteps(state, getBlockDef);
 
-    const target = ["config", "interview", "overview", "final"].includes(state.screen)
+    const target = ["home", "identity", "blocks", "interview", "overview", "final"].includes(state.screen)
       ? state.screen
-      : "config";
+      : "home";
 
     if (target === "interview" && steps.length) {
       state.currentStep = Math.min(state.currentStep, steps.length - 1);
@@ -866,8 +868,10 @@
     } else if (target === "final") {
       renderFinal();
       showScreen("final");
+    } else if (target === "identity" || target === "blocks") {
+      showScreen(target);
     } else {
-      showScreen("config");
+      showScreen("home");
     }
   }
 
@@ -945,6 +949,27 @@
     document.getElementById("modal-add-save").addEventListener("click", saveNewBlock);
     document.getElementById("modal-add-block-overlay").addEventListener("click", (e) => {
       if (e.target.id === "modal-add-block-overlay") closeAddBlockModal();
+    });
+
+    // Navigation Accueil / Étape 1 / Étape 2
+    document.getElementById("btn-home-start").addEventListener("click", () => {
+      showScreen("identity");
+    });
+    document.getElementById("btn-home-import").addEventListener("click", () => {
+      document.getElementById("input-load-json-home").click();
+    });
+    document.getElementById("input-load-json-home").addEventListener("change", (e) => {
+      if (e.target.files[0]) loadJSONFile(e.target.files[0]);
+      e.target.value = "";
+    });
+    document.getElementById("btn-identity-back").addEventListener("click", () => {
+      showScreen("home");
+    });
+    document.getElementById("btn-identity-next").addEventListener("click", () => {
+      showScreen("blocks");
+    });
+    document.getElementById("btn-blocks-back").addEventListener("click", () => {
+      showScreen("identity");
     });
 
     // Démarrer l'entrevue
