@@ -55,7 +55,7 @@ const BLOCK_LIBRARY = [
   {
     id: "ethique",
     title: "Éthique",
-    subtitle: "Le brief moral",
+    subtitle: "Avant d'agir",
     tag: "AVANT d'agir",
     acronym: "S.I.F.T.",
     acronymDescription: "Specify • Identify • Focus • Trust",
@@ -78,7 +78,7 @@ const BLOCK_LIBRARY = [
   {
     id: "intention",
     title: "Intention",
-    subtitle: "Agentivité humaine augmentée",
+    subtitle: "Cadrer l'action",
     tag: "QUAND vous utilisez l'IA",
     acronym: "A.C.T.I.F.",
     acronymDescription: "Action • Contexte • Ton • Identité • Format",
@@ -101,7 +101,7 @@ const BLOCK_LIBRARY = [
   {
     id: "conception",
     title: "Pratique",
-    subtitle: "Comment agir",
+    subtitle: "Passer à l'action",
     tag: "COMMENT vous concevez",
     badge: "I.D.É.E. — Idéer • Développer • Évaluer • Exécuter",
     size: "col-4",
