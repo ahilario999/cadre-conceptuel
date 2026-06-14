@@ -28,6 +28,11 @@
   --accent: #6F5194;
   --accent-contrast: #FFFFFF; /* recalculé par JS selon luminosité */
 
+  /* Teinte pâle de l'accent, utilisée à la place du gris neutre pour les
+     panneaux de l'écran Entrevue (carte de question, pistes, aperçu en
+     direct, etc.). */
+  --accent-tint: color-mix(in srgb, var(--accent) 7%, var(--white));
+
   /* Couleur de secours sous l'image de fond (écrans Accueil / Étape 1 / Étape 2) */
   --hero-bg-b: #FCF4EF;
 
@@ -1104,7 +1109,7 @@ html[data-theme="dark"] .btn--outline { color: var(--white); }
   margin-top: 14px;
   padding: 14px 16px;
   border-radius: var(--radius-md);
-  background: var(--gray-100);
+  background: var(--accent-tint);
   display: flex;
   gap: 12px;
   align-items: flex-start;
@@ -1231,7 +1236,7 @@ html[data-theme="dark"] .btn--outline { color: var(--white); }
 }
 .tags-editor__chip {
   display: flex; align-items: center; gap: 6px;
-  background: var(--gray-100); border-radius: 999px; padding: 6px 6px 6px 14px;
+  background: var(--accent-tint); border-radius: 999px; padding: 6px 6px 6px 14px;
 }
 .tags-editor__chip input {
   border: none; background: transparent; padding: 2px 4px; min-width: 60px; font-size: 0.88rem;
@@ -1588,7 +1593,7 @@ html[data-theme="dark"] .btn--outline { color: var(--white); }
   gap: 10px;
   padding: clamp(14px, 2vw, 20px);
   border-radius: var(--radius-md);
-  background: var(--gray-100);
+  background: var(--accent-tint);
   border: 1px solid var(--gray-200);
 }
 .qa-field__label {
@@ -1682,7 +1687,7 @@ html[data-theme="dark"] .qa-field__ai-status { color: var(--gray-600); }
   border: 1px solid var(--gray-200);
   border-radius: var(--radius-lg);
   padding: 14px;
-  background: var(--gray-200);
+  background: var(--accent-tint);
 }
 .atelier__preview-label {
   display: flex;
