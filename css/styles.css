@@ -142,14 +142,14 @@ img { max-width: 100%; display: block; }
   display: flex;
   flex-direction: column;
   background-color: var(--hero-bg-b);
-  background-image: url("assets/Home-background-light.png");
+  background-image: url("../assets/Home-background-light.png");
   background-size: cover;
   background-position: center top;
   background-repeat: no-repeat;
 }
 
 html[data-theme="dark"] #app {
-  background-image: url("assets/home-background-dark.png");
+  background-image: url("../assets/home-background-dark.png");
 }
 
 .app-header {
