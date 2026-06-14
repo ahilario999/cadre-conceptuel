@@ -914,6 +914,53 @@ html[data-theme="dark"] .btn--outline { color: var(--white); }
 .hero__actions .btn--outline {
   border-color: #B2A1CF;
 }
+
+/* Entrée animée de l'accueil : titre, texte, boutons puis visuel apparaissent
+   en fondu + léger glissement, l'un après l'autre. */
+@keyframes heroReveal {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero__title,
+.hero__lead,
+.hero__actions,
+.hero__visual {
+  animation: heroReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.hero__title   { animation-delay: 0.05s; }
+.hero__lead    { animation-delay: 0.18s; }
+.hero__actions { animation-delay: 0.3s; }
+.hero__visual  { animation-delay: 0.15s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__title,
+  .hero__lead,
+  .hero__actions,
+  .hero__visual {
+    animation: none;
+  }
+}
+
+/* Boutons CTA « magnétiques » : légère élévation + halo de couleur d'accent
+   au survol/focus pour une interaction premium. */
+.hero__actions .btn {
+  transition: transform var(--transition), opacity var(--transition),
+    box-shadow var(--transition), border-color var(--transition);
+}
+.hero__actions .btn:hover,
+.hero__actions .btn:focus-visible {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 10px 24px -8px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+.hero__actions .btn--accent:hover,
+.hero__actions .btn--accent:focus-visible {
+  opacity: 1;
+  box-shadow: 0 10px 26px -6px color-mix(in srgb, var(--accent) 65%, transparent);
+}
+.hero__actions .btn--outline:hover,
+.hero__actions .btn--outline:focus-visible {
+  border-color: var(--accent);
+}
 #btn-home-import {
   min-width: 222px;
 }
