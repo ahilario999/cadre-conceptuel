@@ -977,6 +977,8 @@ html[data-theme="dark"] .btn--outline { color: var(--white); }
   height: auto;
   display: block;
   margin: -40px -40px -64px 0;
+  transform: scale(1.25);
+  transform-origin: bottom right;
 }
 .hero__ribbon--small { max-width: 320px; margin: 0; }
 
@@ -1562,7 +1564,7 @@ html[data-theme="dark"] .btn--outline { color: var(--white); }
   .columns-editor, .columns-view { grid-template-columns: repeat(2, 1fr); }
   .hero { grid-template-columns: 1fr; min-height: auto; text-align: left; padding: clamp(24px, 6vw, 40px) clamp(20px, 5vw, 32px); }
   .hero__visual { order: -1; max-width: 320px; margin: 0 auto; justify-content: center; }
-  .hero__visual .hero__ribbon { max-width: 280px; margin: 0; }
+  .hero__visual .hero__ribbon { max-width: 280px; margin: 0; transform: none; }
   .hero__actions .btn, #btn-home-import { min-width: 0; flex: 1 1 auto; }
   #screen-identity.active, #screen-blocks.active { grid-template-columns: 1fr; }
   .step-header { grid-column: 1; }
