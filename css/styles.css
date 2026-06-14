@@ -926,7 +926,7 @@ html[data-theme="dark"] .btn--outline { color: var(--white); }
 }
 .hero__ribbon {
   width: 100%;
-  max-width: 620px;
+  max-width: 775px;
   height: auto;
   display: block;
   margin: -40px -40px -64px 0;
