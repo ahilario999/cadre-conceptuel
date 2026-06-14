@@ -922,6 +922,7 @@ html[data-theme="dark"] .btn--outline { color: var(--white); }
   align-items: flex-end;
   justify-content: flex-end;
   height: 100%;
+  position: relative;
 }
 .hero__ribbon {
   width: 100%;
@@ -931,6 +932,42 @@ html[data-theme="dark"] .btn--outline { color: var(--white); }
   margin: -40px -40px -64px 0;
 }
 .hero__ribbon--small { max-width: 320px; margin: 0; }
+
+/* Boule de lumière qui orbite autour du ruban (écran Accueil) : un halo
+   flou, animé le long d'un tracé elliptique calqué sur la silhouette du
+   ruban, avec un léger pulse pour un effet "high-end". */
+.hero__visual::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 64px;
+  height: 64px;
+  margin: -32px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--accent) 85%, white) 0%,
+    color-mix(in srgb, var(--accent) 45%, transparent) 45%,
+    transparent 75%
+  );
+  filter: blur(10px);
+  pointer-events: none;
+  z-index: 1;
+  offset-path: ellipse(38% 34% at 58% 52%);
+  offset-rotate: 0deg;
+  animation: ribbonGlowOrbit 16s linear infinite;
+}
+@keyframes ribbonGlowOrbit {
+  0%   { offset-distance: 0%;   transform: scale(0.8);  opacity: 0.55; }
+  25%  { transform: scale(1.25); opacity: 1; }
+  50%  { offset-distance: 50%;  transform: scale(0.8);  opacity: 0.55; }
+  75%  { transform: scale(1.25); opacity: 1; }
+  100% { offset-distance: 100%; transform: scale(0.8);  opacity: 0.55; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero__visual::after { animation: none; opacity: 0.7; }
+}
 
 .logo-dropzone {
   border: 2px dashed var(--gray-400);
