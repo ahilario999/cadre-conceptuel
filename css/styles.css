@@ -141,6 +141,15 @@ img { max-width: 100%; display: block; }
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: var(--hero-bg-b);
+  background-image: url("assets/Home-background-light.png");
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+}
+
+html[data-theme="dark"] #app {
+  background-image: url("assets/home-background-dark.png");
 }
 
 .app-header {
@@ -149,10 +158,10 @@ img { max-width: 100%; display: block; }
   justify-content: space-between;
   padding: var(--pad);
   gap: var(--gap);
-  border-bottom: 1px solid var(--gray-200);
+  border-bottom: 1px solid transparent;
   position: sticky;
   top: 0;
-  background: var(--white);
+  background: var(--hero-bg-b);
   z-index: 50;
 }
 
@@ -165,19 +174,17 @@ img { max-width: 100%; display: block; }
 
 .app-header__logo {
   width: 44px;
-  height: 44px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--gray-200);
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   flex-shrink: 0;
-  background: var(--gray-100);
-  color: var(--gray-600);
+  background: transparent;
+  color: var(--accent);
 }
 .app-header__logo img { width: 100%; height: 100%; object-fit: contain; }
-.app-header__logo svg { width: 22px; height: 22px; }
+.app-header__logo svg { width: 100%; height: 100%; }
 
 .app-header__title {
   font-size: clamp(1rem, 2.4vw, 1.4rem);
@@ -254,7 +261,7 @@ img { max-width: 100%; display: block; }
 .screen {
   flex: 1;
   width: 100%;
-  max-width: 1280px;
+  max-width: 1440px;
   margin: 0 auto;
   padding: var(--pad);
   display: none;
@@ -283,7 +290,8 @@ img { max-width: 100%; display: block; }
   text-align: center;
   font-size: 0.78rem;
   color: var(--gray-600);
-  border-top: 1px solid var(--gray-200);
+  background: var(--hero-bg-b);
+  border-top: 1px solid transparent;
 }
 
 /* ---------- 4. Grille bento ------------------------------------------------ */
@@ -727,43 +735,28 @@ html[data-theme="dark"] .btn--outline { color: var(--white); }
 }
 .config-card h3 { font-size: 1.1rem; }
 
-/* Fond doux partagé par tous les écrans du parcours (Accueil → Cadre final) */
+/* Le fond doux (image Home-background-*.png) est maintenant porté par #app,
+   plein écran derrière toute l'interface — les écrans individuels restent
+   transparents pour ne plus créer d'effet "carte boxée". */
 #screen-identity,
 #screen-blocks,
 #screen-interview,
 #screen-overview,
 #screen-final {
-  background-color: var(--hero-bg-b);
-  background-image: url("assets/Home-background-light.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  border-radius: var(--radius-lg);
+  background: transparent;
+  border-radius: 0;
 }
 
-/* L'écran Accueil reprend le même fond, mais plein écran (pas de carte,
-   pas de marge) pour reproduire le hero "edge-to-edge" du Figma. */
+/* L'écran Accueil est plein écran (pas de carte, pas de marge) pour
+   reproduire le hero "edge-to-edge" du Figma. */
 #screen-home {
-  background-color: var(--hero-bg-b);
-  background-image: url("assets/Home-background-light.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background: transparent;
   border-radius: 0;
   max-width: none;
   width: 100%;
   margin: 0;
   padding: 0;
   overflow: hidden;
-}
-
-html[data-theme="dark"] #screen-home,
-html[data-theme="dark"] #screen-identity,
-html[data-theme="dark"] #screen-blocks,
-html[data-theme="dark"] #screen-interview,
-html[data-theme="dark"] #screen-overview,
-html[data-theme="dark"] #screen-final {
-  background-image: url("assets/home-background-dark.png");
 }
 
 /* Indicateur "Étape X sur Y" */
