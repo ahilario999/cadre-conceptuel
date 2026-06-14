@@ -517,7 +517,7 @@ html[data-theme="dark"] .bento-block.theme-accent-dark {
 .btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
 html[data-theme="dark"] .btn { background: var(--white); color: var(--black); border-color: var(--white); }
-html[data-theme="dark"] .btn--ghost { background: transparent; color: var(--white); border-color: var(--gray-200); }
+html[data-theme="dark"] .btn--ghost { background: transparent; color: var(--black); border-color: var(--gray-200); }
 
 .field {
   display: flex;
