@@ -769,21 +769,40 @@ html[data-theme="dark"] .btn--outline { color: var(--white); }
   margin-bottom: 8px;
 }
 
-/* Mise en page Étape 1 / Étape 2 : visuel décoratif + panneau de formulaire */
-.step-layout {
+/* Mise en page Étape 1 / Étape 2 : le panneau s'aligne sur le titre,
+   le ruban est agrandi et placé en arrière-plan du panneau. */
+#screen-identity,
+#screen-blocks {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--gap);
-  margin-top: var(--gap);
+  grid-template-rows: auto auto auto;
+  column-gap: var(--gap);
   align-items: start;
+  position: relative;
+  overflow: hidden;
 }
+#screen-identity > .step-indicator,
+#screen-blocks > .step-indicator { grid-column: 1; grid-row: 1; }
+#screen-identity > .screen-title,
+#screen-blocks > .screen-title { grid-column: 1; grid-row: 2; }
+#screen-identity > .screen-lead,
+#screen-blocks > .screen-lead { grid-column: 1; grid-row: 3; }
+#screen-identity > .step-layout,
+#screen-blocks > .step-layout { display: contents; }
+
 .step-layout__visual {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 240px;
+  grid-column: 2;
+  grid-row: 1 / -1;
+  position: relative;
+  z-index: 0;
+  min-height: 0;
+  pointer-events: none;
 }
 .step-panel {
+  grid-column: 2;
+  grid-row: 2 / -1;
+  position: relative;
+  z-index: 1;
   border: 1px solid var(--gray-200);
   border-radius: var(--radius-lg);
   padding: var(--pad);
@@ -793,6 +812,15 @@ html[data-theme="dark"] .btn--outline { color: var(--white); }
   gap: 14px;
 }
 .step-panel h2, .step-panel h3 { font-size: 1.1rem; }
+
+.step-layout__visual .hero__ribbon--small {
+  position: absolute;
+  max-width: none;
+  width: 170%;
+  right: -28%;
+  bottom: -10%;
+  margin: 0;
+}
 
 /* ---------- Écran Accueil --------------------------------------------------- */
 .hero {
@@ -1432,7 +1460,10 @@ html[data-theme="dark"] .btn--outline { color: var(--white); }
   .hero__visual { order: -1; max-width: 320px; margin: 0 auto; justify-content: center; }
   .hero__visual .hero__ribbon { max-width: 280px; margin: 0; }
   .hero__actions .btn, #btn-home-import { min-width: 0; flex: 1 1 auto; }
-  .step-layout { grid-template-columns: 1fr; }
+  #screen-identity, #screen-blocks { grid-template-columns: 1fr; }
+  #screen-identity > .step-indicator, #screen-identity > .screen-title, #screen-identity > .screen-lead,
+  #screen-blocks > .step-indicator, #screen-blocks > .screen-title, #screen-blocks > .screen-lead { grid-column: 1; }
+  .step-panel { grid-column: 1; grid-row: auto; }
   .step-layout__visual { display: none; }
 }
 
