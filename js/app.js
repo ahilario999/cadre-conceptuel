@@ -390,14 +390,6 @@
     patternEl.innerHTML = pattern || "";
     patternEl.style.color = block.theme === "accent" ? "var(--accent-contrast)" : "var(--black)";
 
-    // Les pistes de réflexion sont désormais affichées directement dans
-    // chaque champ, et chaque champ propose son propre bouton « Suggérer un
-    // brouillon ». Le bandeau et le bouton globaux ne sont plus utilisés.
-    const hintBox = document.getElementById("interview-hint");
-    const hintToggle = document.getElementById("btn-toggle-hint");
-    hintBox.hidden = true;
-    hintToggle.hidden = true;
-
     const editorContainer = document.getElementById("interview-input");
     renderEditor(editorContainer, block, step, state, {
       onChange: () => {
@@ -502,11 +494,6 @@
         renderOverview();
         showScreen("overview");
       }
-    });
-    document.getElementById("btn-toggle-hint").addEventListener("click", (e) => {
-      const hintBox = document.getElementById("interview-hint");
-      hintBox.hidden = !hintBox.hidden;
-      e.target.textContent = hintBox.hidden ? tr("btnToggleHintShow") : tr("btnToggleHintHide");
     });
   }
 

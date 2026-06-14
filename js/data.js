@@ -78,7 +78,7 @@ const BLOCK_LIBRARY = [
   {
     id: "intention",
     title: "Intention",
-    subtitle: "La co-idéation dirigée",
+    subtitle: "Agentivité humaine augmentée",
     tag: "QUAND vous utilisez l'IA",
     acronym: "A.C.T.I.F.",
     acronymDescription: "Action • Contexte • Ton • Identité • Format",

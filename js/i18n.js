@@ -77,8 +77,6 @@ const UI_STRINGS = {
     btnPrev: "Précédent",
     btnNext: "Suivant",
     btnSeeOverview: "Voir l'aperçu",
-    btnToggleHintShow: "Voir la piste",
-    btnToggleHintHide: "Masquer la piste",
     previewLabel: "Votre Cadre conceptuel — en direct",
     progressLabel: "Bloc {current} sur {total} — {title}",
 
@@ -255,8 +253,6 @@ const UI_STRINGS = {
     btnPrev: "Previous",
     btnNext: "Next",
     btnSeeOverview: "See overview",
-    btnToggleHintShow: "Show prompt",
-    btnToggleHintHide: "Hide prompt",
     previewLabel: "Your Conceptual Framework — live",
     progressLabel: "Block {current} of {total} — {title}",
 
@@ -403,7 +399,7 @@ const BLOCK_LIBRARY_EN = {
   },
   intention: {
     title: "Intention",
-    subtitle: "Directed co-ideation",
+    subtitle: "AgentivitAugmented human agencyé humaine augmentée",
     tag: "WHILE you use AI",
     acronymDescription: "Action • Context • Tone • Identity • Format",
     description: "How to phrase a request to AI so it remains a tool serving your intention.",
