@@ -161,8 +161,22 @@ html[data-theme="dark"] #app {
   border-bottom: 1px solid transparent;
   position: sticky;
   top: 0;
-  background: var(--hero-bg-b);
+  background: transparent;
   z-index: 50;
+  transition: background-color 0.35s ease, box-shadow 0.35s ease,
+    border-color 0.35s ease, backdrop-filter 0.35s ease;
+}
+
+/* Au défilement (classe ajoutée par js/header-scroll.js) : le header,
+   intégré à l'image de fond au repos, devient un bandeau plat. */
+.app-header.is-scrolled {
+  background-color: var(--hero-bg-b);
+  border-bottom-color: var(--gray-200);
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(8px);
+}
+html[data-theme="dark"] .app-header.is-scrolled {
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.4);
 }
 
 .app-header__brand {
