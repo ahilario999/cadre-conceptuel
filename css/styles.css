@@ -822,6 +822,10 @@ html[data-theme="dark"] .btn--accent {
 }
 .step-header .screen-lead { margin-bottom: 0; }
 
+/* Le ruban (Étape 1 / 2) déborde dans la moitié gauche de l'écran :
+   on réduit la largeur du texte descriptif pour éviter le chevauchement. */
+.step-header .screen-lead { max-width: 40ch; }
+
 /* Mise en page Étape 1 / Étape 2 : le panneau s'aligne sur le titre,
    le ruban est agrandi et débordant à gauche du panneau. */
 #screen-identity.active,
