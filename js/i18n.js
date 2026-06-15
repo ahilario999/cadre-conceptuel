@@ -45,6 +45,10 @@ const UI_STRINGS = {
       "Inspiré du cadre « Le graphiste dans la boucle », cet outil vous coache pour bâtir le vôtre : répondez à une courte entrevue par bloc, avec des pistes de réflexion pour chaque thème — la décision finale vous appartient toujours.",
     stepsLead:
       "Inspiré du cadre « Le graphiste dans la boucle », cet outil vous coache pour bâtir le vôtre : répondez à une courte entrevue par bloc, avec des pistes de réflexion pour chaque thème — la décision finale vous appartient toujours.",
+    identityLead:
+      "L’IA transforme les pratiques, mais elle ne remplace pas le jugement professionnel.<br><br>Inspiré du cadre « Le graphiste dans la boucle », cet outil vous invite à formuler votre propre posture, un bloc à la fois. Chaque question vous aide à préciser ce que vous déléguez, ce que vous décidez, ce que vous protégez et ce que vous créez.<br><br>Commencez par remplir ce court formulaire afin de définir le titre et l’identité de votre cadre.",
+    blocksLead:
+      "Choisissez les blocs qui composeront votre cadre conceptuel.<br><br>Chaque bloc représente un sujet à explorer dans l’entrevue. Vous pouvez conserver la structure proposée, retirer les blocs moins pertinents, en ajouter de nouveaux ou modifier leur ordre afin que le cadre reflète mieux votre pratique.<br><br>La disposition choisie servira de point de départ pour construire votre cadre visuel.",
     stepIndicator1: "Étape 1 sur 2",
     identityTitle: "Définissez votre cadre conceptuel",
     btnBackHome: "Accueil",
@@ -238,6 +242,10 @@ const UI_STRINGS = {
       "Inspired by the “The Graphic Designer in the Loop” framework, this tool coaches you to build your own: answer a short interview block by block, with reflection prompts for each theme — the final decision is always yours.",
     stepsLead:
       "Inspired by the “The Graphic Designer in the Loop” framework, this tool coaches you to build your own: answer a short interview block by block, with reflection prompts for each theme — the final decision is always yours.",
+    identityLead:
+      "AI is transforming practices, but it doesn't replace professional judgment.<br><br>Inspired by the “The Graphic Designer in the Loop” framework, this tool invites you to articulate your own stance, one block at a time. Each question helps you clarify what you delegate, what you decide, what you protect, and what you create.<br><br>Start by filling out this short form to define the title and identity of your framework.",
+    blocksLead:
+      "Choose the blocks that will make up your conceptual framework.<br><br>Each block represents a topic to explore in the interview. You can keep the suggested structure, remove less relevant blocks, add new ones, or reorder them so the framework better reflects your practice.<br><br>The layout you choose will be the starting point for building your visual framework.",
     stepIndicator1: "Step 1 of 2",
     identityTitle: "Define your conceptual framework",
     btnBackHome: "Home",
