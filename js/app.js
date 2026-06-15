@@ -401,7 +401,7 @@
     });
     injectIcons(editorContainer);
 
-    document.getElementById("btn-prev-step").disabled = state.currentStep === 0;
+    document.getElementById("btn-prev-step").disabled = false;
     document.getElementById("btn-next-step").innerHTML =
       state.currentStep === steps.length - 1
         ? `${tr("btnSeeOverview")} ${UI_ICONS.arrowRight}`
@@ -486,6 +486,8 @@
       if (state.currentStep > 0) {
         state.currentStep -= 1;
         renderStep();
+      } else {
+        showScreen("blocks");
       }
     });
     document.getElementById("btn-next-step").addEventListener("click", () => {
