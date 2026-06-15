@@ -232,9 +232,15 @@ html[data-theme="dark"] .app-header.is-scrolled {
   align-items: center;
 }
 
-/* Sur l'écran Accueil, on masque les actions de configuration (thème,
-   sauvegarder, importer, recommencer) pour ne garder que l'essentiel. */
-.is-home .app-header__actions-config { display: none; }
+/* Sur l'écran Accueil, on masque les actions de configuration (sauvegarder,
+   importer, recommencer) pour ne garder que l'essentiel, mais on conserve
+   le bouton de thème clair/sombre. */
+.is-home .app-header__actions-config { display: flex; }
+.is-home #btn-save-json,
+.is-home #btn-load-json-label,
+.is-home #btn-restart {
+  display: none;
+}
 
 /* ---------- Toggle de langue (FRA / ENG) --------------------------------- */
 .lang-toggle {
@@ -566,7 +572,7 @@ html[data-theme="dark"] .bento-block.theme-accent-dark {
 
 html[data-theme="dark"] .btn { background: var(--white); color: var(--black); border-color: var(--white); }
 html[data-theme="dark"] .btn--ghost { background: transparent; color: var(--black); border-color: var(--gray-200); }
-html[data-theme="dark"] .btn--outline { color: var(--white); }
+html[data-theme="dark"] .btn--outline { color: var(--black); }
 
 .field {
   display: flex;
@@ -977,7 +983,7 @@ html[data-theme="dark"] .btn--outline { color: var(--white); }
   height: auto;
   display: block;
   margin: -40px -40px -64px 0;
-  transform: scale(1.25);
+  transform: scale(1.25) translateY(28px);
   transform-origin: bottom right;
 }
 .hero__ribbon--small { max-width: 320px; margin: 0; }
