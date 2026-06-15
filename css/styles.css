@@ -1571,6 +1571,29 @@ html[data-theme="dark"] .btn--accent {
 .split-view__title { font-weight: 700; margin-bottom: 4px; }
 .split-view__label { font-size: 0.8rem; opacity: 0.8; margin-bottom: 10px; }
 
+/* Motif décoratif en filigrane (un cœur, dans le même esprit que les autres
+   motifs .bento-block__pattern) pour la colonne « Intentions humaines ». */
+.split-view__col--right {
+  position: relative;
+  overflow: hidden;
+}
+.split-view__col--right::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.18;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none'%3E%3Cpath d='M50 90C50 90 6 60 6 34C6 16 20 6 35 6C46 6 50 15 50 26C50 15 54 6 65 6C80 6 94 16 94 34C94 60 50 90 50 90Z' stroke='%23FFFFFF' stroke-width='0.8'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 65% 65%;
+}
+.split-view__col--right > * {
+  position: relative;
+  z-index: 1;
+}
+
 /* columns view (boîte à outils, read-only) */
 .columns-view {
   display: grid;
