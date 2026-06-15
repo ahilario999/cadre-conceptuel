@@ -1582,12 +1582,12 @@ html[data-theme="dark"] .btn--accent {
   position: absolute;
   inset: 0;
   z-index: 0;
-  opacity: 0.18;
+  opacity: 0.22;
   pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none'%3E%3Cpath d='M50 9C26.8 9 8 27.8 8 51V64' stroke='%23FFFFFF' stroke-width='1.2' stroke-linecap='round'/%3E%3Cpath d='M92 51C92 27.8 73.2 9 50 9' stroke='%23FFFFFF' stroke-width='1.2' stroke-linecap='round' stroke-dasharray='1 5'/%3E%3Cpath d='M21 49C21 33.5 33.5 21 49 21C64.5 21 77 33.5 77 49V65' stroke='%23FFFFFF' stroke-width='1.2' stroke-linecap='round'/%3E%3Cpath d='M33 49C33 40.2 40.2 33 49 33C57.8 33 65 40.2 65 49V73' stroke='%23FFFFFF' stroke-width='1.2' stroke-linecap='round'/%3E%3Cpath d='M49 49V91' stroke='%23FFFFFF' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none'%3E%3Cpath d='M6 62A44 46 0 0 1 94 62' stroke='%23FFFFFF' stroke-width='1.6' stroke-linecap='round' stroke-dasharray='12 3'/%3E%3Cpath d='M12 62A38 40 0 0 1 88 62' stroke='%23FFFFFF' stroke-width='1.6' stroke-linecap='round' stroke-dasharray='7 4'/%3E%3Cpath d='M18 62A32 35 0 0 1 82 62' stroke='%23FFFFFF' stroke-width='1.6' stroke-linecap='round' stroke-dasharray='11 3'/%3E%3Cpath d='M23 62A27 30 0 0 1 77 62' stroke='%23FFFFFF' stroke-width='1.6' stroke-linecap='round' stroke-dasharray='6 4'/%3E%3Cpath d='M28 62A22 25 0 0 1 72 62' stroke='%23FFFFFF' stroke-width='1.6' stroke-linecap='round' stroke-dasharray='9 3'/%3E%3Cpath d='M33 62A17 20 0 0 1 67 62' stroke='%23FFFFFF' stroke-width='1.6' stroke-linecap='round' stroke-dasharray='5 4'/%3E%3Cpath d='M38 62A12 15 0 0 1 62 62' stroke='%23FFFFFF' stroke-width='1.6' stroke-linecap='round' stroke-dasharray='8 3'/%3E%3Cpath d='M43 62A7 10 0 0 1 57 62' stroke='%23FFFFFF' stroke-width='1.6' stroke-linecap='round' stroke-dasharray='4 3'/%3E%3Ccircle cx='50' cy='53' r='2.5' stroke='%23FFFFFF' stroke-width='1.6'/%3E%3Cpath d='M14 76L26 84' stroke='%23FFFFFF' stroke-width='1.6' stroke-linecap='round'/%3E%3Cpath d='M22 82L35 89' stroke='%23FFFFFF' stroke-width='1.6' stroke-linecap='round'/%3E%3Cpath d='M86 76L74 84' stroke='%23FFFFFF' stroke-width='1.6' stroke-linecap='round'/%3E%3Cpath d='M78 82L65 89' stroke='%23FFFFFF' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: center;
-  background-size: 70% 70%;
+  background-size: 80% 80%;
 }
 .split-view__col--right > * {
   position: relative;
