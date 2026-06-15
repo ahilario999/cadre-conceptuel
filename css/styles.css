@@ -513,6 +513,18 @@ html[data-theme="dark"] .bento-block.theme-accent-dark {
 .bento-block__body ul { margin: 0; padding-left: 1.1em; }
 .bento-block__body li { margin-bottom: 4px; }
 
+/* Bloc « Votre signature » : texte plus grand, réparti sur deux colonnes
+   (avec 5 éléments, la 1re colonne en reçoit 3 et la 2e, 2). */
+.bento-block[data-block-id="signature"] .bento-block__body ul {
+  columns: 2;
+  column-gap: 28px;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+.bento-block[data-block-id="signature"] .bento-block__body li {
+  break-inside: avoid;
+}
+
 .bento-block__answer {
   white-space: pre-wrap;
   font-size: 0.92rem;
@@ -1600,6 +1612,7 @@ html[data-theme="dark"] .btn--outline { color: var(--black); }
   .columns-editor, .columns-view { grid-template-columns: 1fr; }
   .app-header__title { font-size: 1rem; }
   .interview-card { padding: 18px; }
+  .bento-block[data-block-id="signature"] .bento-block__body ul { columns: 1; }
 }
 
 /* ---------- 12. Divers ------------------------------------------------------- */
