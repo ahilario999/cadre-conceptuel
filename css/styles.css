@@ -157,6 +157,12 @@ html[data-theme="dark"] #app {
   background-image: url("../assets/home-background-dark.png");
 }
 
+/* Pousse le footer en bas de la fenêtre quand le contenu est court,
+   sans l'empêcher de suivre le contenu quand celui-ci dépasse la fenêtre. */
+#main {
+  flex: 1 0 auto;
+}
+
 .app-header {
   display: flex;
   align-items: center;
