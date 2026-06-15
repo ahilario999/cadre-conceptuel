@@ -586,6 +586,14 @@ html[data-theme="dark"] .btn { background: var(--white); color: var(--black); bo
 html[data-theme="dark"] .btn--ghost { background: transparent; color: var(--black); border-color: var(--gray-200); }
 html[data-theme="dark"] .btn--outline { color: var(--black); }
 
+/* Le bouton « Commencer » (accent) garde sa couleur violette en mode sombre
+   au lieu d'hériter du noir/blanc générique de .btn. */
+html[data-theme="dark"] .btn--accent {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  border-color: var(--accent);
+}
+
 .field {
   display: flex;
   flex-direction: column;
