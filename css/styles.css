@@ -1582,12 +1582,12 @@ html[data-theme="dark"] .btn--accent {
   position: absolute;
   inset: 0;
   z-index: 0;
-  opacity: 0.22;
+  opacity: 0.2;
   pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none'%3E%3Cpath d='M6 62A44 46 0 0 1 94 62' stroke='%23FFFFFF' stroke-width='1.6' stroke-linecap='round' stroke-dasharray='12 3'/%3E%3Cpath d='M12 62A38 40 0 0 1 88 62' stroke='%23FFFFFF' stroke-width='1.6' stroke-linecap='round' stroke-dasharray='7 4'/%3E%3Cpath d='M18 62A32 35 0 0 1 82 62' stroke='%23FFFFFF' stroke-width='1.6' stroke-linecap='round' stroke-dasharray='11 3'/%3E%3Cpath d='M23 62A27 30 0 0 1 77 62' stroke='%23FFFFFF' stroke-width='1.6' stroke-linecap='round' stroke-dasharray='6 4'/%3E%3Cpath d='M28 62A22 25 0 0 1 72 62' stroke='%23FFFFFF' stroke-width='1.6' stroke-linecap='round' stroke-dasharray='9 3'/%3E%3Cpath d='M33 62A17 20 0 0 1 67 62' stroke='%23FFFFFF' stroke-width='1.6' stroke-linecap='round' stroke-dasharray='5 4'/%3E%3Cpath d='M38 62A12 15 0 0 1 62 62' stroke='%23FFFFFF' stroke-width='1.6' stroke-linecap='round' stroke-dasharray='8 3'/%3E%3Cpath d='M43 62A7 10 0 0 1 57 62' stroke='%23FFFFFF' stroke-width='1.6' stroke-linecap='round' stroke-dasharray='4 3'/%3E%3Ccircle cx='50' cy='53' r='2.5' stroke='%23FFFFFF' stroke-width='1.6'/%3E%3Cpath d='M14 76L26 84' stroke='%23FFFFFF' stroke-width='1.6' stroke-linecap='round'/%3E%3Cpath d='M22 82L35 89' stroke='%23FFFFFF' stroke-width='1.6' stroke-linecap='round'/%3E%3Cpath d='M86 76L74 84' stroke='%23FFFFFF' stroke-width='1.6' stroke-linecap='round'/%3E%3Cpath d='M78 82L65 89' stroke='%23FFFFFF' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FFFFFF'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='1.2' d='M7.864 4.243A7.5 7.5 0 0119.5 10.5c0 2.92-.556 5.709-1.568 8.268M5.742 6.364A7.465 7.465 0 004.5 10.5a7.464 7.464 0 01-1.15 3.993m1.989 3.559A11.209 11.209 0 008.25 10.5a3.75 3.75 0 117.5 0c0 .527-.021 1.049-.064 1.565M12 10.5a14.94 14.94 0 01-3.6 9.75m6.633-4.596a18.666 18.666 0 01-2.485 5.33'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: center;
-  background-size: 80% 80%;
+  background-size: 65% 65%;
 }
 .split-view__col--right > * {
   position: relative;
