@@ -122,7 +122,7 @@ module.exports = async function handler(req, res) {
       ].join(" ");
       userPrompt = `${contextLines ? contextLines + "\n\n" : ""}Question : ${question}\n\nPropose une courte liste (un élément par ligne, 1 à 3 mots chacun, 3 à 6 éléments).`;
     }
-    maxTokens = 300;
+    maxTokens = 800;
   } else if (format === "phrase") {
     // Bloc « Phrase-clé » : une seule phrase courte et percutante.
     if (isEn) {
@@ -142,7 +142,7 @@ module.exports = async function handler(req, res) {
       ].join(" ");
       userPrompt = `${contextLines ? contextLines + "\n\n" : ""}Question : ${question}\n\nPropose une seule phrase-clé courte et percutante (maximum 12 mots).`;
     }
-    maxTokens = 150;
+    maxTokens = 400;
   } else if (format === "outils") {
     // Bloc « Outils IA » : liste d'outils pertinents avec leur usage.
     if (isEn) {
@@ -162,7 +162,7 @@ module.exports = async function handler(req, res) {
       ].join(" ");
       userPrompt = `${contextLines ? contextLines + "\n\n" : ""}Question : ${question}\n\nPropose 3 à 5 outils réels et existants, pertinents pour ce domaine, avec leur usage, un par ligne, au format « Nom — usage ».`;
     }
-    maxTokens = 400;
+    maxTokens = 1000;
   } else if (format === "liste-outils") {
     // Colonnes de la « Boîte à outils » (Traditionnel / Numérique / Collaboratif /
     // Génératif) : on attend des NOMS RÉELS de logiciels ou d'outils, pas des
@@ -184,7 +184,7 @@ module.exports = async function handler(req, res) {
       ].join(" ");
       userPrompt = `${contextLines ? contextLines + "\n\n" : ""}Catégorie : ${question}${hint ? "\nDescription de la catégorie : " + hint : ""}\n\nPropose 3 à 5 noms d'outils ou de logiciels réels et existants pour cette catégorie, un par ligne.`;
     }
-    maxTokens = 300;
+    maxTokens = 800;
   } else if (format === "table") {
     // Bloc « Qui fait quoi ? » : pour chaque étape, une courte description du
     // rôle de la personne et de celui de l'IA.
@@ -212,7 +212,7 @@ module.exports = async function handler(req, res) {
       ].join(" ");
       userPrompt = `${contextLines ? contextLines + "\n\n" : ""}Question : ${question}\n\nÉtapes (dans l'ordre) : ${rowsList}\n\nPropose une ligne par étape, au format « Étape : <${colHuman}> | <${colAi}> ».`;
     }
-    maxTokens = 600;
+    maxTokens = 2000;
   } else {
     // Champs de type question/réponse (Éthique, Intention, Conception, etc.).
     if (isEn) {
@@ -232,7 +232,7 @@ module.exports = async function handler(req, res) {
       ].join(" ");
       userPrompt = `${contextLines ? contextLines + "\n\n" : ""}Question : ${question}\n\nPropose un très court brouillon de réponse (1 phrase, 2 maximum, environ 30 mots max).`;
     }
-    maxTokens = 300;
+    maxTokens = 800;
   }
 
   try {
