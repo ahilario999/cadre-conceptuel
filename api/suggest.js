@@ -15,8 +15,7 @@
  *    Cette clé n'est JAMAIS exposée au navigateur : elle reste côté serveur.
  */
 
-const GROQ_URL = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
-const GROQ_MODEL = "gemini-2.0-flash";
+const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
 
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
@@ -237,25 +236,28 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const groqRes = await fetch(GROQ_URL, {
+    const geminiRes = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: GROQ_MODEL,
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt },
+        system_instruction: {
+          parts: [{ text: systemPrompt }],
+        },
+        contents: [
+          { role: "user", parts: [{ text: userPrompt }] },
         ],
-        temperature: 0.7,
-        max_tokens: maxTokens,
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: maxTokens,
+        },
       }),
     });
 
-    if (!groqRes.ok) {
-      const errText = await groqRes.text().catch(() => "");
+    if (!geminiRes.ok) {
+      const errText = await geminiRes.text().catch(() => "");
+      console.error("Gemini HTTP error:", geminiRes.status, errText.slice(0, 300));
       res.status(502).json({
         error: isEn
           ? "The AI suggestion service did not respond correctly."
@@ -265,8 +267,18 @@ module.exports = async function handler(req, res) {
       return;
     }
 
-    const data = await groqRes.json();
-    const suggestion = (data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content || "").trim();
+    const data = await geminiRes.json();
+    const suggestion = (
+      data &&
+      data.candidates &&
+      data.candidates[0] &&
+      data.candidates[0].content &&
+      data.candidates[0].content.parts &&
+      data.candidates[0].content.parts[0] &&
+      data.candidates[0].content.parts[0].text
+      ? data.candidates[0].content.parts[0].text
+      : ""
+    ).trim();
 
     if (!suggestion) {
       res.status(502).json({
