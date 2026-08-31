@@ -1105,7 +1105,8 @@ html[data-theme="dark"] .btn--accent {
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
 .block-toggle__icon svg { width: 14px; height: 14px; }
-.block-toggle__title { font-weight: 600; font-size: 0.92rem; flex: 1; }
+.block-toggle__info { flex: 1; min-width: 0; }
+.block-toggle__title { font-weight: 600; font-size: 0.92rem; }
 .block-toggle__sub { font-size: 0.78rem; color: var(--gray-600); }
 .switch {
   position: relative;

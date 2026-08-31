@@ -307,7 +307,7 @@
       row.className = "block-toggle" + (enabled ? "" : " is-disabled");
       row.innerHTML = `
         <div class="block-toggle__icon" aria-hidden="true">${UI_ICONS[block.icon] || UI_ICONS.spark}</div>
-        <div>
+        <div class="block-toggle__info">
           <div class="block-toggle__title">${block.title}</div>
           <div class="block-toggle__sub">${block.subtitle || ""}</div>
         </div>
