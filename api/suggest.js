@@ -3,7 +3,8 @@
  *
  * Fonction serverless Vercel (Node.js) : reçoit une question du « Cadre
  * conceptuel » et renvoie un court brouillon de réponse généré par l'API
- * Google Gemini, que la personne pourra ensuite modifier et personnaliser.
+ * Google Gemini (gemini-3.5-flash-lite, modèle rapide sans thinking),
+ * que la personne pourra ensuite modifier et personnaliser.
  *
  * Le champ `lang` ("fr" | "en") indique dans quelle langue le modèle doit
  * répondre — il correspond à la langue choisie dans l'interface (toggle
@@ -15,7 +16,7 @@
  *    Cette clé n'est JAMAIS exposée au navigateur : elle reste côté serveur.
  */
 
-const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent";
+const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent";
 
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
