@@ -3,20 +3,20 @@
  *
  * Fonction serverless Vercel (Node.js) : reçoit une question du « Cadre
  * conceptuel » et renvoie un court brouillon de réponse généré par l'API
- * Groq, que la personne pourra ensuite modifier et personnaliser.
+ * OpenRouter, que la personne pourra ensuite modifier et personnaliser.
  *
- * Le champ `lang` ("fr" | "en") indique dans quelle langue Groq doit
+ * Le champ `lang` ("fr" | "en") indique dans quelle langue le modèle doit
  * répondre — il correspond à la langue choisie dans l'interface (toggle
  * FRA/ENG).
  *
  * Configuration requise :
- *  - Variable d'environnement GROQ_API_KEY (Vercel → Project Settings →
- *    Environment Variables). Clé gratuite disponible sur console.groq.com.
+ *  - Variable d'environnement OPENROUTER_API_KEY (Vercel → Project Settings →
+ *    Environment Variables). Clé gratuite disponible sur openrouter.ai.
  *    Cette clé n'est JAMAIS exposée au navigateur : elle reste côté serveur.
  */
 
-const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
-const GROQ_MODEL = "openai/gpt-oss-20b";
+const GROQ_URL = "https://openrouter.ai/api/v1/chat/completions";
+const GROQ_MODEL = "meta-llama/llama-3.1-8b-instruct:free";
 
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
@@ -24,11 +24,11 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  const apiKey = process.env.GROQ_API_KEY;
+  const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey) {
     res.status(500).json({
       error:
-        "La suggestion IA n'est pas configurée sur ce site (clé GROQ_API_KEY manquante). / AI suggestions are not configured on this site (missing GROQ_API_KEY).",
+        "La suggestion IA n'est pas configurée sur ce site (clé OPENROUTER_API_KEY manquante). / AI suggestions are not configured on this site (missing OPENROUTER_API_KEY).",
     });
     return;
   }
@@ -242,6 +242,8 @@ module.exports = async function handler(req, res) {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
+        "HTTP-Referer": "https://cadre-conceptuel.vercel.app",
+        "X-Title": "Cadre Conceptuel",
       },
       body: JSON.stringify({
         model: GROQ_MODEL,
