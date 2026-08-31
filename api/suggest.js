@@ -122,7 +122,7 @@ module.exports = async function handler(req, res) {
       ].join(" ");
       userPrompt = `${contextLines ? contextLines + "\n\n" : ""}Question : ${question}\n\nPropose une courte liste (un élément par ligne, 1 à 3 mots chacun, 3 à 6 éléments).`;
     }
-    maxTokens = 800;
+    maxTokens = 200;
   } else if (format === "phrase") {
     // Bloc « Phrase-clé » : une seule phrase courte et percutante.
     if (isEn) {
@@ -142,7 +142,7 @@ module.exports = async function handler(req, res) {
       ].join(" ");
       userPrompt = `${contextLines ? contextLines + "\n\n" : ""}Question : ${question}\n\nPropose une seule phrase-clé courte et percutante (maximum 12 mots).`;
     }
-    maxTokens = 400;
+    maxTokens = 80;
   } else if (format === "outils") {
     // Bloc « Outils IA » : liste d'outils pertinents avec leur usage.
     if (isEn) {
@@ -162,7 +162,7 @@ module.exports = async function handler(req, res) {
       ].join(" ");
       userPrompt = `${contextLines ? contextLines + "\n\n" : ""}Question : ${question}\n\nPropose 3 à 5 outils réels et existants, pertinents pour ce domaine, avec leur usage, un par ligne, au format « Nom — usage ».`;
     }
-    maxTokens = 1000;
+    maxTokens = 200;
   } else if (format === "liste-outils") {
     // Colonnes de la « Boîte à outils » (Traditionnel / Numérique / Collaboratif /
     // Génératif) : on attend des NOMS RÉELS de logiciels ou d'outils, pas des
@@ -184,7 +184,7 @@ module.exports = async function handler(req, res) {
       ].join(" ");
       userPrompt = `${contextLines ? contextLines + "\n\n" : ""}Catégorie : ${question}${hint ? "\nDescription de la catégorie : " + hint : ""}\n\nPropose 3 à 5 noms d'outils ou de logiciels réels et existants pour cette catégorie, un par ligne.`;
     }
-    maxTokens = 800;
+    maxTokens = 200;
   } else if (format === "table") {
     // Bloc « Qui fait quoi ? » : pour chaque étape, une courte description du
     // rôle de la personne et de celui de l'IA.
@@ -212,7 +212,7 @@ module.exports = async function handler(req, res) {
       ].join(" ");
       userPrompt = `${contextLines ? contextLines + "\n\n" : ""}Question : ${question}\n\nÉtapes (dans l'ordre) : ${rowsList}\n\nPropose une ligne par étape, au format « Étape : <${colHuman}> | <${colAi}> ».`;
     }
-    maxTokens = 2000;
+    maxTokens = 300;
   } else {
     // Champs de type question/réponse (Éthique, Intention, Conception, etc.).
     if (isEn) {
@@ -232,28 +232,38 @@ module.exports = async function handler(req, res) {
       ].join(" ");
       userPrompt = `${contextLines ? contextLines + "\n\n" : ""}Question : ${question}\n\nPropose un très court brouillon de réponse (1 phrase, 2 maximum, environ 30 mots max).`;
     }
-    maxTokens = 800;
+    maxTokens = 200;
   }
 
   try {
-    const geminiRes = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        system_instruction: {
-          parts: [{ text: systemPrompt }],
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+
+    let geminiRes;
+    try {
+      geminiRes = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        contents: [
-          { role: "user", parts: [{ text: userPrompt }] },
-        ],
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: maxTokens,
-        },
-      }),
-    });
+        signal: controller.signal,
+        body: JSON.stringify({
+          system_instruction: {
+            parts: [{ text: systemPrompt }],
+          },
+          contents: [
+            { role: "user", parts: [{ text: userPrompt }] },
+          ],
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: maxTokens,
+            thinkingConfig: { thinkingBudget: 0 },
+          },
+        }),
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
 
     if (!geminiRes.ok) {
       const errText = await geminiRes.text().catch(() => "");
@@ -268,16 +278,21 @@ module.exports = async function handler(req, res) {
     }
 
     const data = await geminiRes.json();
+
+    // Log finishReason for debugging
+    const candidate = data && data.candidates && data.candidates[0];
+    console.log("Gemini finishReason:", candidate && candidate.finishReason);
+
+    // Join all parts (thinking models can split content across multiple parts)
     const suggestion = (
-      data &&
-      data.candidates &&
-      data.candidates[0] &&
-      data.candidates[0].content &&
-      data.candidates[0].content.parts &&
-      data.candidates[0].content.parts[0] &&
-      data.candidates[0].content.parts[0].text
-      ? data.candidates[0].content.parts[0].text
-      : ""
+      candidate &&
+      candidate.content &&
+      Array.isArray(candidate.content.parts)
+        ? candidate.content.parts
+            .filter((p) => p && typeof p.text === "string")
+            .map((p) => p.text)
+            .join("")
+        : ""
     ).trim();
 
     if (!suggestion) {
