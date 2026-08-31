@@ -267,12 +267,20 @@ module.exports = async function handler(req, res) {
     if (!geminiRes.ok) {
       const errText = await geminiRes.text().catch(() => "");
       console.error("Gemini HTTP error:", geminiRes.status, errText.slice(0, 300));
-      res.status(502).json({
-        error: isEn
-          ? "The AI suggestion service did not respond correctly."
-          : "Le service de suggestion IA n'a pas répondu correctement.",
-        details: errText.slice(0, 300),
-      });
+      if (geminiRes.status === 429) {
+        res.status(429).json({
+          error: isEn
+            ? "Too many requests — please wait a few seconds and try again."
+            : "Trop de demandes simultanées — attendez quelques secondes et réessayez.",
+        });
+      } else {
+        res.status(502).json({
+          error: isEn
+            ? "The AI suggestion service did not respond correctly."
+            : "Le service de suggestion IA n'a pas répondu correctement.",
+          details: errText.slice(0, 300),
+        });
+      }
       return;
     }
 

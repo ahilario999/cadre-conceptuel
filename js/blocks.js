@@ -464,7 +464,7 @@ function buildSuggestTools(ta, q, block, state, format) {
       ta.focus();
     } catch (err) {
       status.classList.add("qa-field__ai-status--error");
-      status.textContent = tr(state, "suggestError");
+      status.textContent = (err && err.message) ? err.message : tr(state, "suggestError");
     } finally {
       btn.disabled = false;
       btn.innerHTML = idleLabel;
@@ -497,7 +497,7 @@ function buildSuggestToolsGeneric({ block, state, q, format, extra, hasContent, 
       onApply(suggestion);
     } catch (err) {
       status.classList.add("qa-field__ai-status--error");
-      status.textContent = tr(state, "suggestError");
+      status.textContent = (err && err.message) ? err.message : tr(state, "suggestError");
     } finally {
       btn.disabled = false;
       btn.innerHTML = idleLabel;
