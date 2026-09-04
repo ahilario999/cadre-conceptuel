@@ -237,33 +237,24 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 8000);
-
-    let geminiRes;
-    try {
-      geminiRes = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+    const geminiRes = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        system_instruction: {
+          parts: [{ text: systemPrompt }],
         },
-        signal: controller.signal,
-        body: JSON.stringify({
-          system_instruction: {
-            parts: [{ text: systemPrompt }],
-          },
-          contents: [
-            { role: "user", parts: [{ text: userPrompt }] },
-          ],
-          generationConfig: {
-            temperature: 0.7,
-            maxOutputTokens: maxTokens,
-          },
-        }),
-      });
-    } finally {
-      clearTimeout(timeout);
-    }
+        contents: [
+          { role: "user", parts: [{ text: userPrompt }] },
+        ],
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: maxTokens,
+        },
+      }),
+    });
 
     if (!geminiRes.ok) {
       const errText = await geminiRes.text().catch(() => "");
